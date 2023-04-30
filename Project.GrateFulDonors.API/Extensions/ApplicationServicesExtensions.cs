@@ -10,6 +10,7 @@ namespace Project.GrateFulDonors.API.Extensions
         {
             services.AddTransient<IGrateFulDonorsResponse, GrateFulDonorsResponse>();
             services.AddTransient<ITestService, TestService>();
+            services.AddTransient<IUserService, UserService>();
             return services;
         }
     }
