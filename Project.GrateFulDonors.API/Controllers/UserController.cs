@@ -24,10 +24,23 @@ namespace Project.GrateFulDonors.API.Controllers
             return await userService.GetAllUsers();
         }
         [HttpPost]
+        [Route("Registration")]
+        public async Task<GrateFulDonorsResponse> Registration(UserRegistrationInsertModel model)
+        {
+            return await userService.Registration(model);
+        }
+        [HttpPost]
         [Route("Login")]
         public async Task<GrateFulDonorsResponse> Login(UserLoginModel model)
         {
             return await userService.Login(model);
+        }
+
+        [HttpGet]
+        [Route("GetUserDetailsByUserID")]
+        public async Task<GrateFulDonorsResponse> GetUserDetailsByUserID(int UserID)
+        {
+            return await userService.GetUserDetailsByUserID(UserID);
         }
     }
 }

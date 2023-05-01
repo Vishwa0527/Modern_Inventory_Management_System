@@ -11,5 +11,6 @@ namespace Project.GrateFulDonors.Core.Models
         public int UserType { get; set; }
         public DateTime JoinedDate { get; set; }
         public bool IsActive { get; set; }
+        public string Email { get; set; }
     }
 }

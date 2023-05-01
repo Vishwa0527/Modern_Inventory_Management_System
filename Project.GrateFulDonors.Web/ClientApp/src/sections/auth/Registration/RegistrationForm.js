@@ -10,18 +10,25 @@ import { ToastContainer, toast } from 'react-toastify';
 import * as Yup from 'yup';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+import MenuItem from '@material-ui/core/MenuItem';
 
 // ----------------------------------------------------------------------
 
 export default function RegistrationForm() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
-    const [loginData, setloginData] = useState({
-        username: "",
-        password: ""
+    const today = new Date().toISOString().split('T')[0];
+    const [registrationData, setloginData] = useState({
+        nic: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+        gender: 0,
+        dob: today,
+        address: ""
     });
 
-    const LoginSchema = Yup.object().shape({
+    const RegistrationSchema = Yup.object().shape({
         username: Yup.string().required('User Name is required'),
         password: Yup.string().required('Password is required')
     });
@@ -36,18 +43,23 @@ export default function RegistrationForm() {
             })
             return;
         }
-        toast.success("Successfully Logged In", {
+        toast.success("Successfully Registered", {
             onClose: () => navigate('/dashboard/app', { replace: true })
         });
     }
 
     const formik = useFormik({
         initialValues: {
-            username: loginData.username,
-            password: loginData.password,
+            nic: registrationData.nic,
+            password: registrationData.password,
+            firstName: registrationData.firstName,
+            lastName: registrationData.lastName,
+            dob: registrationData.dob,
+            gender: registrationData.gender,
+            address: registrationData.address,
             remember: true
         },
-        validationSchema: LoginSchema,
+        validationSchema: RegistrationSchema,
         onSubmit: (values) => {
             login(values);
         }
@@ -61,38 +73,116 @@ export default function RegistrationForm() {
                     pauseOnHover
                 />
                 <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-                    <Stack spacing={3}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
                         <TextField
                             fullWidth
-                            autoComplete="username"
-                            type="email"
-                            label="User Name"
+                            size="small"
+                            label="NIC *"
+                            value={formik.values.nic}
                             onChange={formik.handleChange}
-                            value={formik.values.username}
-                            size='small'
-                            {...getFieldProps('username')}
-                            error={Boolean(touched.username && errors.username)}
-                            helperText={touched.username && errors.username}
+                            {...getFieldProps('nic')}
+                            error={Boolean(touched.nic && errors.nic)}
+                            helperText={touched.nic && errors.nic}
+                        // disabled={factoryType == 1 || factoryType == 3}
                         />
-
+                        <TextField select
+                            fullWidth
+                            size="small"
+                            label="User Type *"
+                            value={formik.values.userTypeID}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('userTypeID')}
+                            error={Boolean(touched.userTypeID && errors.userTypeID)}
+                            helperText={touched.userTypeID && errors.userTypeID}
+                        // disabled={formik.values.nic == '' || factoryType == 1 || factoryType == 3}
+                        // InputProps={{
+                        //     readOnly: pageProps.isEditType == 3
+                        // }}
+                        >
+                            <MenuItem key={0} value={0}> Select User Type</MenuItem>
+                            <MenuItem value={2}> Donor</MenuItem>
+                            <MenuItem value={3}> Seeker</MenuItem>
+                        </TextField>
+                    </Stack>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
                         <TextField
                             fullWidth
-                            autoComplete="current-password"
-                            type={showPassword ? 'text' : 'password'}
-                            label="Password"
+                            size="small"
+                            label="First Name"
+                            value={formik.values.firstName}
                             onChange={formik.handleChange}
-                            value={formik.values.password}
-                            size='small'
-                            {...getFieldProps('password')}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                            <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
+                            {...getFieldProps('firstName')}
+                            error={Boolean(touched.firstName && errors.firstName)}
+                            helperText={touched.firstName && errors.firstName}
+                        // disabled={formik.values.nic == '' || factoryType == 1 || factoryType == 3}
+                        // InputProps={{
+                        //     readOnly: pageProps.isEditType == 3
+                        // }}
+                        />
+                        <TextField
+                            fullWidth
+                            size="small"
+                            label="Last Name"
+                            value={formik.values.lastName}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('lastName')}
+                            error={Boolean(touched.lastName && errors.lastName)}
+                            helperText={touched.lastName && errors.lastName}
+                        // disabled={factoryType == 1 || factoryType == 3}
+                        />
+                    </Stack>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
+                        <TextField
+                            fullWidth
+                            id="outlined-name"
+                            size="small"
+                            type="date"
+                            label="DOB"
+                            value={formik.values.dob}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('dob')}
+                            InputLabelProps={{ shrink: true }}
+                            error={Boolean(touched.dob && errors.dob)}
+                            helperText={touched.dob && errors.dob}
+                        // disabled={formik.values.nic == '' || factoryType == 1 || factoryType == 3}
+                        // InputProps={{
+                        //     readOnly: pageProps.isEditType == 3
+                        // }}
+                        />
+                    </Stack>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
+                        <TextField
+                            select
+                            fullWidth
+                            size="small"
+                            label="Gender"
+                            value={formik.values.gender}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('gender')}
+                            error={Boolean(touched.gender && errors.gender)}
+                            helperText={touched.gender && errors.gender}
+                        // disabled={formik.values.nic == '' || factoryType == 1 || factoryType == 3}
+                        // InputProps={{
+                        //     readOnly: pageProps.isEditType == 3
+                        // }}
+                        >
+                            <MenuItem key={0} value={0}> Select Gender</MenuItem>
+                            <MenuItem value={1}> Male</MenuItem>
+                            <MenuItem value={2}> Female</MenuItem>
+                        </TextField>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            label="Address"
+                            value={formik.values.address}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('address')}
+                            error={Boolean(touched.address && errors.address)}
+                            helperText={touched.address && errors.address}
+                        // disabled={formik.values.nic == '' || factoryType == 1 || factoryType == 3}
+                        // InputProps={{
+                        //   readOnly: pageProps.isEditType == 3
+                        // }}
                         />
                     </Stack>
                     <LoadingButton fullWidth size="large" type="submit" variant="contained">

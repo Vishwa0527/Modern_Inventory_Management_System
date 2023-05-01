@@ -17,11 +17,22 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
+import React, { useEffect, useState } from 'react';
+
+
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
+
   const theme = useTheme();
+
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const userIdFromStorage = localStorage.getItem('userId');
+    setUserId(userIdFromStorage);
+  }, []);
 
   return (
     <>
