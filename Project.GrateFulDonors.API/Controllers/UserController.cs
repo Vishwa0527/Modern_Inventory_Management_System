@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.GrateFulDonors.Core.Common;
+using Project.GrateFulDonors.Core.Models;
 using Project.GrateFulDonors.Core.Services;
 using Project.GrateFulDonors.Services;
 
@@ -21,6 +22,12 @@ namespace Project.GrateFulDonors.API.Controllers
         public async Task<GrateFulDonorsResponse> GetAllUsers()
         {
             return await userService.GetAllUsers();
+        }
+        [HttpPost]
+        [Route("Login")]
+        public async Task<GrateFulDonorsResponse> Login(UserLoginModel model)
+        {
+            return await userService.Login(model);
         }
     }
 }

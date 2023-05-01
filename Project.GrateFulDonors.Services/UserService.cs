@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Project.GrateFulDonors.Core.Models;
+using System.Linq;
 
 namespace Project.GrateFulDonors.Services
 {
@@ -29,6 +30,35 @@ namespace Project.GrateFulDonors.Services
             {
                 var result = await UnitOfWork.Repository<UserGetModel>().GetEntitiesBySPAsyncWithoutParameters("[Administration].[GetAllUsers]");
                 return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        public async Task<GrateFulDonorsResponse> Login(UserLoginModel model)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "UserName", Tuple.Create(model.Username.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "Password", Tuple.Create(model.Password.ToString(), DbType.String, ParameterDirection.Input) },
+                };
+
+                var result = (await UnitOfWork.Repository<UserReturnModel>().GetEntitiesBySPAsync("[Administration].[UserLogin]", parameters)).ToList();
+                if (result.Count() > 0)
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+                }
+                else
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Error.ToString(), string.Empty, result);
+                }
+                
             }
             catch (Exception ex)
             {
