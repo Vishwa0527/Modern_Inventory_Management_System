@@ -9,6 +9,7 @@ import { StyledNavItem, StyledNavItemIcon } from './styles';
 
 NavSection.propTypes = {
   data: PropTypes.array,
+
 };
 
 export default function NavSection({ data = [], ...other }) {

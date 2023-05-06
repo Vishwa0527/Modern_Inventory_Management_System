@@ -1,5 +1,5 @@
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
@@ -14,6 +14,7 @@ import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -35,9 +36,24 @@ Nav.propTypes = {
 };
 
 export default function Nav({ openNav, onCloseNav }) {
+  const [userId, setUserId] = useState(null);
+  const [userData, setUserData] = useState({
+    userName: "",
+    email: "",
+    userType: 0
+  });
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
+
+  useEffect(() => {
+    const userIdFromStorage = localStorage.getItem('userId');
+    setUserId(userIdFromStorage);
+  }, []);
+
+  useEffect(() => {
+    GetUserDetailsByUserID();
+  }, [userId]);
 
   useEffect(() => {
     if (openNav) {
@@ -45,6 +61,20 @@ export default function Nav({ openNav, onCloseNav }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  async function GetUserDetailsByUserID() {
+    const result = await axios.get('https://localhost:7211/api/User/GetUserDetailsByUserID', {
+      params: {
+        userId: userId
+      }
+    });
+
+    setUserData({
+      userName: result.data.data.userName,
+      email: result.data.data.email,
+      userType: result.data.data.userType
+    });
+  }
 
   const renderContent = (
     <Scrollbar
@@ -64,11 +94,11 @@ export default function Nav({ openNav, onCloseNav }) {
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
+                {userData.userName}
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
+                {userData.userType == 1 ? "Administrator" : userData.userType == 2 ? "Donor" : userData.userType == 3 ? "Seeker" : null}
               </Typography>
             </Box>
           </StyledAccount>
@@ -78,30 +108,6 @@ export default function Nav({ openNav, onCloseNav }) {
       <NavSection data={navConfig} />
 
       <Box sx={{ flexGrow: 1 }} />
-
-      {/* <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-        <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-          <Box
-            component="img"
-            src="/assets/illustrations/illustration_avatar.png"
-            sx={{ width: 100, position: 'absolute', top: -50 }}
-          />
-
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography gutterBottom variant="h6">
-              Get more?
-            </Typography>
-
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              From only $69
-            </Typography>
-          </Box>
-
-          <Button href="https://material-ui.com/store/items/minimal-dashboard/" target="_blank" variant="contained">
-            Upgrade to Pro
-          </Button>
-        </Stack>
-      </Box> */}
     </Scrollbar>
   );
 

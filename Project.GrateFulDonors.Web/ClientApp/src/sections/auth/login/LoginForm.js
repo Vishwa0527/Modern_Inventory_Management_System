@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
+import { Link, Stack, IconButton, InputAdornment, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
@@ -37,7 +37,12 @@ export default function LoginForm() {
       return;
     }
     toast.success("Successfully Logged In", {
-      onClose: () => navigate('/dashboard/app', { replace: true })
+      // onClose: () => navigate('/dashboard/app', { state: { userId: result.data.data[0].userID } })
+      onClose: () => {
+        const userId = result.data.data[0].userID;
+        localStorage.setItem('userId', userId);
+        navigate('/dashboard/app');
+      }
     });
   }
 
