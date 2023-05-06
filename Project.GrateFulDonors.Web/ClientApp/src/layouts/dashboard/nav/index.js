@@ -13,7 +13,7 @@ import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
-import navConfig from './config';
+import DashboardNav from './config';
 import axios from 'axios';
 
 // ----------------------------------------------------------------------
@@ -36,6 +36,7 @@ Nav.propTypes = {
 };
 
 export default function Nav({ openNav, onCloseNav }) {
+  const navConfig = DashboardNav();
   const [userId, setUserId] = useState(null);
   const [userData, setUserData] = useState({
     userName: "",
