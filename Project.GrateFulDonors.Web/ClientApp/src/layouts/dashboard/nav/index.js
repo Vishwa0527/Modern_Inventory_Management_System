@@ -39,7 +39,8 @@ export default function Nav({ openNav, onCloseNav }) {
   const [userId, setUserId] = useState(null);
   const [userData, setUserData] = useState({
     userName: "",
-    email: ""
+    email: "",
+    userType: 0
   });
   const { pathname } = useLocation();
 
@@ -67,9 +68,11 @@ export default function Nav({ openNav, onCloseNav }) {
         userId: userId
       }
     });
+
     setUserData({
       userName: result.data.data.userName,
-      email: result.data.data.email
+      email: result.data.data.email,
+      userType: result.data.data.userType
     });
   }
 
@@ -95,7 +98,7 @@ export default function Nav({ openNav, onCloseNav }) {
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
+                {userData.userType == 1 ? "Administrator" : userData.userType == 2 ? "Donor" : userData.userType == 3 ? "Seeker" : null}
               </Typography>
             </Box>
           </StyledAccount>
@@ -105,30 +108,6 @@ export default function Nav({ openNav, onCloseNav }) {
       <NavSection data={navConfig} />
 
       <Box sx={{ flexGrow: 1 }} />
-
-      {/* <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
-        <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-          <Box
-            component="img"
-            src="/assets/illustrations/illustration_avatar.png"
-            sx={{ width: 100, position: 'absolute', top: -50 }}
-          />
-
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography gutterBottom variant="h6">
-              Get more?
-            </Typography>
-
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              From only $69
-            </Typography>
-          </Box>
-
-          <Button href="https://material-ui.com/store/items/minimal-dashboard/" target="_blank" variant="contained">
-            Upgrade to Pro
-          </Button>
-        </Stack>
-      </Box> */}
     </Scrollbar>
   );
 

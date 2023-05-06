@@ -18,6 +18,7 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 
 
@@ -28,11 +29,22 @@ export default function DashboardAppPage() {
   const theme = useTheme();
 
   const [userId, setUserId] = useState(null);
+  const [donationTypeLegnth, setDonationTypeLegnth] = useState(0);
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem('userId');
     setUserId(userIdFromStorage);
   }, []);
+
+  useEffect(() => {
+    GetAllDonationTypeLength();
+  }, []);
+
+  async function GetAllDonationTypeLength() {
+    const result = await axios.get('https://localhost:7211/api/DonationType/GetAllDonationTypeLength');
+    setDonationTypeLegnth(result.data.data.length)
+    return;
+  }
 
   return (
     <>
@@ -47,19 +59,19 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Donors" total={714000} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="Total Donors" total={10} icon={'ant-design:android-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Seekers" total={1352831} color="info" icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary title="Total Seekers" total={20} color="info" icon={'ant-design:apple-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Donations" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
+            <AppWidgetSummary title="Total Donations" total={1} color="warning" icon={'ant-design:windows-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Donation Types" total={234} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary title="Donation Types" total={donationTypeLegnth} color="error" icon={'ant-design:bug-filled'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>

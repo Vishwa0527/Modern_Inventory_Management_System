@@ -13,14 +13,14 @@ import Registration from './pages/Registration';
 
 // ----------------------------------------------------------------------
 
-export default function Router() {
+export default function Router({ role }) {
   const routes = useRoutes([
     {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: <UserPage /> },
+        { path: 'user', element: role === 'admin' ? <UserPage /> : null },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
