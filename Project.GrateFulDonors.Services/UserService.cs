@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Project.GrateFulDonors.Core.Models;
 using System.Linq;
+using Project.GrateFulDonors.Dapper;
 
 namespace Project.GrateFulDonors.Services
 {
@@ -43,10 +44,11 @@ namespace Project.GrateFulDonors.Services
         {
             try
             {
+                var encryptedPassword = PasswordEncrypt(model.Password);
                 var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
                 {
                     { "UserName", Tuple.Create(model.Username.ToString(), DbType.String, ParameterDirection.Input) },
-                    { "Password", Tuple.Create(model.Password.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "Password", Tuple.Create(encryptedPassword.ToString(), DbType.String, ParameterDirection.Input) },
                 };
 
                 var result = (await UnitOfWork.Repository<UserReturnModel>().GetEntitiesBySPAsync("[Administration].[UserLogin]", parameters)).ToList();
@@ -70,31 +72,37 @@ namespace Project.GrateFulDonors.Services
 
         public async Task<GrateFulDonorsResponse> Registration(UserRegistrationInsertModel model)
         {
-            try
+            var passwordEncrypted = PasswordEncrypt(model.Password);
+            if (model.UserTypeID == 1)
             {
-                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                var configath = configuration.GetSection("FarmerDocumentImagePath:Path").Value;
+                var directoryPath = configuration.GetSection("FarmerDocumentImagePath:Directry").Value;
+                var baseLink = configuration.GetSection("FarmerDocumentImagePath:FileLinkBase").Value;
+                int DonorID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveDonor(model, configath, directoryPath, baseLink, passwordEncrypted);
+                if (DonorID > 0)
                 {
-                    { "UserName", Tuple.Create(model.Username.ToString(), DbType.String, ParameterDirection.Input) },
-                    { "Password", Tuple.Create(model.Password.ToString(), DbType.String, ParameterDirection.Input) },
-                };
-
-                var result = (await UnitOfWork.Repository<UserReturnModel>().GetEntitiesBySPAsync("[Administration].[UserLogin]", parameters)).ToList();
-                if (result.Count() > 0)
-                {
-                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, DonorID);
                 }
                 else
                 {
-                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Error.ToString(), string.Empty, result);
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Error.ToString(), string.Empty, DonorID);
                 }
-
             }
-            catch (Exception ex)
+            else
             {
-
-                throw ex;
+                var configath = configuration.GetSection("FarmerDocumentImagePath:Path").Value;
+                var directoryPath = configuration.GetSection("FarmerDocumentImagePath:Directry").Value;
+                var baseLink = configuration.GetSection("FarmerDocumentImagePath:FileLinkBase").Value;
+                int SeekerID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveSeeker(model, configath, directoryPath, baseLink, passwordEncrypted);
+                if (SeekerID > 0)
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, SeekerID);
+                }
+                else
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Error.ToString(), string.Empty, SeekerID);
+                }
             }
-
         }
 
         public async Task<GrateFulDonorsResponse> GetUserDetailsByUserID(int UserID)
@@ -117,5 +125,26 @@ namespace Project.GrateFulDonors.Services
             }
 
         }
+        public string PasswordEncrypt(string Password) 
+        {
+            string Key = "adef@@kfxcbv@";
+
+            if (string.IsNullOrEmpty(Password)) return "";
+            Password += Key;
+
+            var passwordBytes = Encoding.UTF8.GetBytes(Password);
+            return Convert.ToBase64String(passwordBytes);
+        }
+        public string PasswordDecrypt(string Password)
+        {
+            string Key = "adef@@kfxcbv@";
+
+            if (string.IsNullOrEmpty(Password)) return "";
+            var base64EncodeBytes = Convert.FromBase64String(Password);
+            var result = Encoding.UTF8.GetString(base64EncodeBytes);
+            result = result.Substring(0, result.Length - Key.Length);
+            return result;
+        }
     }
+
 }

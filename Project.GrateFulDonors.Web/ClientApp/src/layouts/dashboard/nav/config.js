@@ -49,6 +49,11 @@ function DashboardNav() {
       icon: icon('ic_blog'),
     },
     {
+      title: 'Profile',
+      path: '/profilePage',
+      icon: icon('ic_disabled'),
+    },
+    {
       title: 'Not found',
       path: '/404',
       icon: icon('ic_disabled'),
@@ -76,6 +81,11 @@ function DashboardNav() {
       path: '/404',
       icon: icon('ic_disabled'),
     },
+    {
+      title: 'Profile',
+      path: '/profilePage',
+      icon: icon('ic_disabled'),
+    },
   ];
 
   const navConfig2 = [
@@ -97,6 +107,11 @@ function DashboardNav() {
     {
       title: 'Not found',
       path: '/404',
+      icon: icon('ic_disabled'),
+    },
+    {
+      title: 'Profile',
+      path: '/profilePage',
       icon: icon('ic_disabled'),
     },
   ];
