@@ -3,6 +3,9 @@
     [UserName]     VARCHAR (50) NULL,
     [UserType]     INT          NOT NULL,
     [JoinedDate]   DATETIME     NULL,
+    [Email]        VARCHAR (50) NULL,
+    [Password]     VARCHAR (50) NULL,
+    [VerifyStatus] INT          NULL,
     [IsActive]     BIT          NULL,
     [CreatedBy]    INT          NULL,
     [CreatedDate]  DATETIME     NULL,
@@ -10,4 +13,6 @@
     [ModifiedDate] DATETIME     NULL,
     CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ([UserID] ASC)
 );
+
+
 

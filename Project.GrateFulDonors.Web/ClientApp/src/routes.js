@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Registration from './pages/Registration';
+import ProfilePage from './pages/ProfilePage';
 
 // ----------------------------------------------------------------------
 
@@ -47,6 +48,10 @@ export default function Router({ role }) {
     {
       path: '*',
       element: <Navigate to="/404" replace />,
+    },
+    {
+      path: '/profilePage',
+      element: <ProfilePage />,
     },
   ]);
 

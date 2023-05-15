@@ -121,6 +121,7 @@
     <Folder Include="Administration\" />
     <Folder Include="Administration\Tables\" />
     <Folder Include="Security\" />
+    <Folder Include="Administration\Stored Procedures\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Administration\Tables\User.sql">
@@ -129,5 +130,65 @@
     </Build>
     <Build Include="Security\Administration.sql" />
     <Build Include="Security\Permissions.sql" />
+    <Build Include="Administration\Tables\UserImage.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Tables\Seeker.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Tables\GrateFulUserType.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Tables\Donor.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Tables\DonationType.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\UserLogin.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\SeekerTypeUserDetailsSave.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\SaveUserImage.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\SaveSeekerDetails.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\SaveDonorDetails.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\GetUserDetailsByUserID.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\GetDonationTypesForTheDropDown.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\GetAllUsers.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\GetAllDonationTypeLength.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <Build Include="Administration\Stored Procedures\DonorTypeUserDetailsSave.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
 </Project>

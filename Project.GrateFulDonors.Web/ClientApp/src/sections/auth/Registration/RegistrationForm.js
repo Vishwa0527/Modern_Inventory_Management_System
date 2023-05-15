@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
+import { Link, Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -18,7 +18,6 @@ import CardMedia from '@material-ui/core/CardMedia';
 
 export default function RegistrationForm() {
     const navigate = useNavigate();
-    const [showPassword, setShowPassword] = useState(false);
     const today = new Date().toISOString().split('T')[0];
     const [ImageObject, setImageObject] = useState();
     const [ImageHide, setImageHide] = useState(true);
@@ -33,32 +32,52 @@ export default function RegistrationForm() {
         address: "",
         image: "",
         donationTypeID: 0,
-        userTypeID: 0
+        userTypeID: 0,
+        confirmPassword: "",
+        email: ""
     });
     useEffect(() => {
         getDonationTypesForTheDropDown();
     }, []);
     const RegistrationSchema = Yup.object().shape({
         nic: Yup.string().required('NIC is Required'),
-        password: Yup.string().required('Password is required'),
         firstName: Yup.string().required('First Name is required'),
         userTypeID: Yup.number().min(1, 'User Type Required').required('User Type required'),
-        image: Yup.string().required('Image is required')
+        password: Yup.string()
+            .required('Required')
+            .min(8, 'Must be at least 8 characters')
+            .max(20, 'Must be at most 20 characters'),
+        confirmPassword: Yup.string()
+            .required('Required')
+            .oneOf([Yup.ref('password'), null], 'Passwords must match')
     });
 
     async function registration(values, image) {
-        console.log("values", values);
-        console.log("image", image)
-        // const result = await axios.post('https://localhost:7211/api/User/Login', values);
-        // if (result.data.statusCode === "Error") {
-        //     toast.error("Error Occured in Registration");
-        //     return;
-        // }
-        // else {
-        //     toast.success("Successfully Registered", {
-        //         onClose: () => navigate('/login', { replace: true })
-        //     });
-        // }
+        let model = {
+            nic: values.nic,
+            password: values.password,
+            firstName: values.firstName,
+            userTypeID: values.userTypeID,
+            lastName: values.lastName,
+            dob: values.dob,
+            gender: values.gender,
+            address: values.address,
+            image: values.image,
+            donationTypeID: values.donationTypeID,
+            confirmPassword: values.confirmPassword,
+            email: values.email,
+            image: image
+        }
+        const result = await axios.post('https://localhost:7211/api/User/Registration', model);
+        if (result.data.statusCode === "Error") {
+            toast.error("Error Occured in Registration");
+            return;
+        }
+        else {
+            toast.success("Successfully Registered", {
+                onClose: () => navigate('/login', { replace: true })
+            });
+        }
     }
 
     async function getDonationTypesForTheDropDown() {
@@ -78,7 +97,8 @@ export default function RegistrationForm() {
             address: registrationData.address,
             image: registrationData.image,
             donationTypeID: registrationData.donationTypeID,
-            remember: true
+            confirmPassword: registrationData.confirmPassword,
+            email: registrationData.email
         },
         validationSchema: RegistrationSchema,
         onSubmit: (values) => {
@@ -113,7 +133,7 @@ export default function RegistrationForm() {
         return items
     }
 
-    const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+    const { errors, touched, handleSubmit, getFieldProps } = formik;
     return (
         <>
             <FormikProvider value={formik}>
@@ -144,8 +164,8 @@ export default function RegistrationForm() {
                             helperText={touched.userTypeID && errors.userTypeID}
                         >
                             <MenuItem key={0} value={0}> Select User Type</MenuItem>
-                            <MenuItem value={2}> Donor</MenuItem>
-                            <MenuItem value={3}> Seeker</MenuItem>
+                            <MenuItem value={1}> Donor</MenuItem>
+                            <MenuItem value={2}> Seeker</MenuItem>
                         </TextField>
                     </Stack>
                     <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
@@ -229,6 +249,17 @@ export default function RegistrationForm() {
                             error={Boolean(touched.password && errors.password)}
                             helperText={touched.password && errors.password}
                         />
+                        <TextField
+                            fullWidth
+                            size="small"
+                            label="Confirm Password *"
+                            value={formik.values.confirmPassword}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('confirmPassword')}
+                            type="password"
+                            error={Boolean(touched.confirmPassword && errors.confirmPassword)}
+                            helperText={touched.confirmPassword && errors.confirmPassword}
+                        />
                     </Stack>
                     <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px', marginBottom: '25px' }} spacing={3}>
 
@@ -241,6 +272,19 @@ export default function RegistrationForm() {
                             {...getFieldProps('address')}
                             error={Boolean(touched.address && errors.address)}
                             helperText={touched.address && errors.address}
+                        />
+                    </Stack>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px', marginBottom: '25px' }} spacing={3}>
+
+                        <TextField
+                            fullWidth
+                            size="small"
+                            label="Email"
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('email')}
+                            error={Boolean(touched.email && errors.email)}
+                            helperText={touched.email && errors.email}
                         />
                     </Stack>
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>

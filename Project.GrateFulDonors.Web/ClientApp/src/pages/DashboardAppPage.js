@@ -93,23 +93,17 @@ export default function DashboardAppPage() {
               ]}
               chartData={[
                 {
-                  name: 'Team A',
+                  name: 'Donors',
                   type: 'column',
                   fill: 'solid',
                   data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
                 },
                 {
-                  name: 'Team B',
+                  name: 'Seekers',
                   type: 'area',
                   fill: 'gradient',
                   data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                },
-                {
-                  name: 'Team C',
-                  type: 'line',
-                  fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
-                },
+                }
               ]}
             />
           </Grid>
@@ -118,10 +112,10 @@ export default function DashboardAppPage() {
             <AppCurrentVisits
               title="Current Visits"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Uva', value: 10 },
+                { label: 'Western', value: 20 },
+                { label: 'Central', value: 30 },
+                { label: 'Sothern', value: 40 },
               ]}
               chartColors={[
                 theme.palette.primary.main,

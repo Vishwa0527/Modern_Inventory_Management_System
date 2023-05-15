@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Project.GrateFulDonors.Core\Project.GrateFulDonors.Core.csproj" />
+    <ProjectReference Include="..\Project.GrateFulDonors.Dapper\Project.GrateFulDonors.Dapper.csproj" />
   </ItemGroup>
 
 </Project>
