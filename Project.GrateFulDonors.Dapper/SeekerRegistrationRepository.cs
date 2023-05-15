@@ -4,7 +4,10 @@ using Project.GrateFulDonors.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Project.GrateFulDonors.Dapper
@@ -50,65 +53,48 @@ namespace Project.GrateFulDonors.Dapper
                                 return seekerID;
 
                             }
+                            else
+                            {
+                                if (donorSaveModel.Image != "")
+                                {
+                                    var LinkedPath = Path.Combine(configath, directoryPath);
+                                    var fileName = "profile_picture";
+                                    var uniq = Guid.NewGuid();
+                                    var filePath = Path.Combine(LinkedPath, fileName + uniq.ToString() + ".jpg");
+                                    var fileLink = baseLink + '/' + directoryPath + '/' + fileName + uniq.ToString() + ".jpg";
+                                    string modifiedstream = "";
+                                    modifiedstream = Regex.Replace(donorSaveModel.Image, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
+
+                                    byte[] bytes = Convert.FromBase64String(modifiedstream);
+
+                                    if (!Directory.Exists(LinkedPath))
+                                    {
+                                        Directory.CreateDirectory(LinkedPath);
+                                    }
+
+                                    using (FileStream fs = System.IO.File.Create(filePath))
+                                    {
+                                        fs.Write(bytes, 0, bytes.Count());
+                                    }
+                                    DynamicParameters dynamicParametersdocument = MapToUserDocumentDetails(donorSaveModel, filePath, fileLink, userID);
+
+                                    await connection.QueryAsync<UserRegistrationInsertModel>("[Administration].[SaveUserImage]",
+                                    param: dynamicParametersdocument,
+                                    transaction: transaction,
+                                    commandType: CommandType.StoredProcedure);
+
+                                    var userImageID = dynamicParametersdocument.Get<int>("UserImageID");
+                                    if (userImageID < 0)
+                                    {
+                                        transaction.Rollback();
+                                        return userImageID;
+
+                                    }
+                                }
+
+                            }
                             transaction.Commit();
                             return userID;
-                            //foreach (var festival in farmerSaveModel.Festival)
-                            //{
-                            //    DynamicParameters dynamicParametersFestival = MapToFestivalDetails(festival, farmerID, farmerSaveModel);
-
-                            //    await connection.QueryAsync<FarmerCollectonCenterMappingModel>("[FMS].[SaveFarmerFestivalDetails]",
-                            //    param: dynamicParametersFestival,
-                            //    transaction: transaction,
-                            //    commandType: CommandType.StoredProcedure);
-
-                            //    var festivslID = dynamicParametersFestival.Get<int>("Result");
-                            //    if (festivslID < 0)
-                            //    {
-                            //        transaction.Rollback();
-                            //        return festivslID;
-
-                            //    }
-                            //}
-                            //    foreach (var item in farmerSaveModel.FarmerDocumentSaveModels)
-                            //    {
-                            //        var LinkedPath = Path.Combine(configath, directoryPath);
-                            //        var fileName = item.FileName.Remove(item.FileName.Length - 4, 4);
-                            //        var uniq = Guid.NewGuid();
-                            //        var filePath = Path.Combine(LinkedPath, fileName + uniq.ToString() + ".jpg");
-                            //        var fileLink = baseLink + '/' + directoryPath + '/' + fileName + uniq.ToString() + ".jpg";
-                            //        string modifiedstream = "";
-                            //        int CreatedBy = farmerSaveModel.CreatedBy;
-                            //        modifiedstream = Regex.Replace(item.Image, @"^data:image\/[a-zA-Z]+;base64,", string.Empty);
-
-                            //        byte[] bytes = Convert.FromBase64String(modifiedstream);
-
-                            //        if (!Directory.Exists(LinkedPath))
-                            //        {
-                            //            Directory.CreateDirectory(LinkedPath);
-                            //        }
-
-                            //        using (FileStream fs = System.IO.File.Create(filePath))
-                            //        {
-                            //            fs.Write(bytes, 0, bytes.Count());
-                            //        }
-                            //        DynamicParameters dynamicParametersdocument = MapToFarmerDocumentDetails(item, filePath, fileLink, CreatedBy, farmerID);
-
-                            //        await connection.QueryAsync<FarmerCollectonCenterMappingModel>("[FMS].[FarmerDocumentSave]",
-                            //        param: dynamicParametersdocument,
-                            //        transaction: transaction,
-                            //        commandType: CommandType.StoredProcedure);
-
-                            //        var farmerDocumentID = dynamicParametersdocument.Get<int>("FarmerDocumentID");
-                            //        if (farmerDocumentID < 0)
-                            //        {
-                            //            transaction.Rollback();
-                            //            return farmerDocumentID;
-
-                            //        }
-                            //    }
-                            //    transaction.Commit();
-                            //    return farmerID;
-                            //}
                         }
                     }
                     catch (Exception exception)
@@ -149,6 +135,19 @@ namespace Project.GrateFulDonors.Dapper
             dynamicParameters.Add("DOB", model.Dob, DbType.DateTime, ParameterDirection.Input);
             dynamicParameters.Add("Address", model.Address, DbType.String, ParameterDirection.Input);
             dynamicParameters.Add("DonationTypeID", model.DonationTypeID.ToString(), DbType.Int32, ParameterDirection.Input);
+
+            return dynamicParameters;
+        }
+
+        public static DynamicParameters MapToUserDocumentDetails(UserRegistrationInsertModel model, string filePath, string fileLink, int userID)
+        {
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("UserImageID", 0.ToString(), DbType.Int32, ParameterDirection.InputOutput);
+            dynamicParameters.Add("UserID", userID.ToString(), DbType.Int32, ParameterDirection.Input);
+            dynamicParameters.Add("ImageURL", filePath.ToString(), DbType.String, ParameterDirection.Input);
+            dynamicParameters.Add("ImageLink", fileLink.ToString(), DbType.String, ParameterDirection.Input);
+            dynamicParameters.Add("Image", model.Image.ToString(), DbType.String, ParameterDirection.Input);
+            dynamicParameters.Add("DocumentTypeID", 1.ToString(), DbType.Int32, ParameterDirection.Input);
 
             return dynamicParameters;
         }

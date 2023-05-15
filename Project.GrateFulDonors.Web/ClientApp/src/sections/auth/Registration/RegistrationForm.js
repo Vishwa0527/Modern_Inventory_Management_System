@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
+import { Link, Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -43,7 +43,6 @@ export default function RegistrationForm() {
         nic: Yup.string().required('NIC is Required'),
         firstName: Yup.string().required('First Name is required'),
         userTypeID: Yup.number().min(1, 'User Type Required').required('User Type required'),
-        image: Yup.string().required('Image is required'),
         password: Yup.string()
             .required('Required')
             .min(8, 'Must be at least 8 characters')
@@ -54,18 +53,31 @@ export default function RegistrationForm() {
     });
 
     async function registration(values, image) {
-        console.log("values", values);
-        console.log("image", image)
-        // const result = await axios.post('https://localhost:7211/api/User/Login', values);
-        // if (result.data.statusCode === "Error") {
-        //     toast.error("Error Occured in Registration");
-        //     return;
-        // }
-        // else {
-        //     toast.success("Successfully Registered", {
-        //         onClose: () => navigate('/login', { replace: true })
-        //     });
-        // }
+        let model = {
+            nic: values.nic,
+            password: values.password,
+            firstName: values.firstName,
+            userTypeID: values.userTypeID,
+            lastName: values.lastName,
+            dob: values.dob,
+            gender: values.gender,
+            address: values.address,
+            image: values.image,
+            donationTypeID: values.donationTypeID,
+            confirmPassword: values.confirmPassword,
+            email: values.email,
+            image: image
+        }
+        const result = await axios.post('https://localhost:7211/api/User/Registration', model);
+        if (result.data.statusCode === "Error") {
+            toast.error("Error Occured in Registration");
+            return;
+        }
+        else {
+            toast.success("Successfully Registered", {
+                onClose: () => navigate('/login', { replace: true })
+            });
+        }
     }
 
     async function getDonationTypesForTheDropDown() {
@@ -86,8 +98,7 @@ export default function RegistrationForm() {
             image: registrationData.image,
             donationTypeID: registrationData.donationTypeID,
             confirmPassword: registrationData.confirmPassword,
-            email: registrationData.email,
-            remember: true
+            email: registrationData.email
         },
         validationSchema: RegistrationSchema,
         onSubmit: (values) => {
@@ -122,7 +133,7 @@ export default function RegistrationForm() {
         return items
     }
 
-    const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+    const { errors, touched, handleSubmit, getFieldProps } = formik;
     return (
         <>
             <FormikProvider value={formik}>

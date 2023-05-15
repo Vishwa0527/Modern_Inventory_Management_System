@@ -75,9 +75,9 @@ namespace Project.GrateFulDonors.Services
             var passwordEncrypted = PasswordEncrypt(model.Password);
             if (model.UserTypeID == 1)
             {
-                var configath = configuration.GetSection("FarmerDocumentImagePath:Path").Value;
-                var directoryPath = configuration.GetSection("FarmerDocumentImagePath:Directry").Value;
-                var baseLink = configuration.GetSection("FarmerDocumentImagePath:FileLinkBase").Value;
+                var configath = configuration.GetSection("UserImagePath:Path").Value;
+                var directoryPath = configuration.GetSection("UserImagePath:Directry").Value;
+                var baseLink = configuration.GetSection("UserImagePath:FileLinkBase").Value;
                 int DonorID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveDonor(model, configath, directoryPath, baseLink, passwordEncrypted);
                 if (DonorID > 0)
                 {
@@ -90,9 +90,9 @@ namespace Project.GrateFulDonors.Services
             }
             else
             {
-                var configath = configuration.GetSection("FarmerDocumentImagePath:Path").Value;
-                var directoryPath = configuration.GetSection("FarmerDocumentImagePath:Directry").Value;
-                var baseLink = configuration.GetSection("FarmerDocumentImagePath:FileLinkBase").Value;
+                var configath = configuration.GetSection("UserImagePath:Path").Value;
+                var directoryPath = configuration.GetSection("UserImagePath:Directry").Value;
+                var baseLink = configuration.GetSection("UserImagePath:FileLinkBase").Value;
                 int SeekerID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveSeeker(model, configath, directoryPath, baseLink, passwordEncrypted);
                 if (SeekerID > 0)
                 {

@@ -9,7 +9,7 @@ namespace Project.GrateFulDonors.Core.Models
         public string Nic { get; set; }
         public string Password { get; set; }
         public string FirstName { get; set; }
-        public int LastName { get; set; }
+        public string LastName { get; set; }
         public int Gender { get; set; }
         public string Dob { get; set; }
         public string Address { get; set; }
