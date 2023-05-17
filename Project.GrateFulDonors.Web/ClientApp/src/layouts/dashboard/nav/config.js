@@ -50,8 +50,8 @@ function DashboardNav() {
     },
     {
       title: 'Profile',
-      path: '/profilePage',
-      icon: icon('ic_disabled'),
+      path: '/dashboard/profilePage',
+      icon: icon('ic_user'),
     },
     {
       title: 'Not found',
@@ -83,8 +83,8 @@ function DashboardNav() {
     },
     {
       title: 'Profile',
-      path: '/profilePage',
-      icon: icon('ic_disabled'),
+      path: '/dashboard/profilePage',
+      icon: icon('ic_user'),
     },
   ];
 
@@ -111,8 +111,8 @@ function DashboardNav() {
     },
     {
       title: 'Profile',
-      path: '/profilePage',
-      icon: icon('ic_disabled'),
+      path: '/dashboard/profilePage',
+      icon: icon('ic_user'),
     },
   ];
 

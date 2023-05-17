@@ -24,6 +24,7 @@ export default function Router({ role }) {
         { path: 'user', element: role === 'admin' ? <UserPage /> : null },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
+        { path: 'profilePage', element: <ProfilePage /> },
       ],
     },
     {
@@ -49,10 +50,7 @@ export default function Router({ role }) {
       path: '*',
       element: <Navigate to="/404" replace />,
     },
-    {
-      path: '/profilePage',
-      element: <ProfilePage />,
-    },
+
   ]);
 
   return routes;
