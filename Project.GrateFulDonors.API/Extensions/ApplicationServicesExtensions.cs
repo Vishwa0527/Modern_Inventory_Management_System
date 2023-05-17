@@ -12,6 +12,10 @@ namespace Project.GrateFulDonors.API.Extensions
             services.AddTransient<ITestService, TestService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IDonationTypeService, DonationTypeService>();
+            services.AddTransient<IDonorService, DonorService>();
+            services.AddTransient<ISeekerService, SeekerService>();
+            services.AddTransient<IMobileService, MobileService>();
+
             return services;
         }
     }

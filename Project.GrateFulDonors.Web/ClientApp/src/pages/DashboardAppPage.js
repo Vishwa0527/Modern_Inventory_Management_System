@@ -30,6 +30,8 @@ export default function DashboardAppPage() {
 
   const [userId, setUserId] = useState(null);
   const [donationTypeLegnth, setDonationTypeLegnth] = useState(0);
+  const [donorLegnth, setDonorLegnth] = useState(0);
+  const [seekerLegnth, setSeekerLegnth] = useState(0);
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem('userId');
@@ -38,6 +40,8 @@ export default function DashboardAppPage() {
 
   useEffect(() => {
     GetAllDonationTypeLength();
+    GetAllDonorLength();
+    GetAllSeekerLength();
   }, []);
 
   async function GetAllDonationTypeLength() {
@@ -46,6 +50,17 @@ export default function DashboardAppPage() {
     return;
   }
 
+  async function GetAllDonorLength() {
+    const result = await axios.get('https://localhost:7211/api/Donor/GetAllDonorLength');
+    setDonorLegnth(result.data.data.length)
+    return;
+  }
+
+  async function GetAllSeekerLength() {
+    const result = await axios.get('https://localhost:7211/api/Seeker/GetAllSeekerLength');
+    setSeekerLegnth(result.data.data.length)
+    return;
+  }
   return (
     <>
       <Helmet>
@@ -59,11 +74,11 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Donors" total={10} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="Total Donors" total={donorLegnth} icon={'ant-design:android-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Seekers" total={20} color="info" icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary title="Total Seekers" total={seekerLegnth} color="info" icon={'ant-design:apple-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
