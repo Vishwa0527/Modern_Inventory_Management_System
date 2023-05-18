@@ -9,7 +9,7 @@ CREATE PROCEDURE [Administration].[UserLogin]
 
 AS
 BEGIN
-	SELECT UserID, UserName 
+	SELECT UserID, UserName, UserType
 	FROM [Administration].[User]
 	WHERE UserName LIKE '%' + @UserName + '%'
 	AND Password = @Password
