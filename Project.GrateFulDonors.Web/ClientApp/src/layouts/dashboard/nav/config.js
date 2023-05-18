@@ -27,7 +27,7 @@ function DashboardNav() {
     setUserType(result.data.data.userType);
   }
 
-  const navConfig = [
+  const admin = [
     {
       title: 'dashboard',
       path: '/dashboard/app',
@@ -39,9 +39,32 @@ function DashboardNav() {
       icon: icon('ic_user'),
     },
     {
-      title: 'product',
-      path: '/dashboard/products',
-      icon: icon('ic_cart'),
+      title: 'blog',
+      path: '/dashboard/blog',
+      icon: icon('ic_blog'),
+    },
+    {
+      title: 'Profile',
+      path: '/dashboard/profilePage',
+      icon: icon('ic_usergroup'),
+    },
+    {
+      title: 'Donation Request',
+      path: '/dashboard/donationRequestAdd',
+      icon: icon('ic_heart'),
+    }
+  ];
+
+  const donor = [
+    {
+      title: 'Dashboard',
+      path: '/dashboard/app',
+      icon: icon('ic_analytics'),
+    },
+    {
+      title: 'Donate',
+      path: '/dashboard/donate',
+      icon: icon('ic_heart'),
     },
     {
       title: 'blog',
@@ -51,72 +74,34 @@ function DashboardNav() {
     {
       title: 'Profile',
       path: '/dashboard/profilePage',
-      icon: icon('ic_user'),
-    },
-    {
-      title: 'Not found',
-      path: '/404',
-      icon: icon('ic_disabled'),
+      icon: icon('ic_usergroup'),
     },
   ];
 
-  const navConfig1 = [
+  const seeker = [
     {
       title: 'dashboard',
       path: '/dashboard/app',
       icon: icon('ic_analytics'),
     },
     {
-      title: 'product',
-      path: '/dashboard/products',
-      icon: icon('ic_cart'),
-    },
-    {
       title: 'blog',
       path: '/dashboard/blog',
       icon: icon('ic_blog'),
     },
     {
-      title: 'Not found',
-      path: '/404',
-      icon: icon('ic_disabled'),
-    },
-    {
       title: 'Profile',
       path: '/dashboard/profilePage',
-      icon: icon('ic_user'),
+      icon: icon('ic_usergroup'),
+    },
+    {
+      title: 'Donation Request',
+      path: '/dashboard/donationRequestAdd',
+      icon: icon('ic_heart'),
     },
   ];
 
-  const navConfig2 = [
-    {
-      title: 'dashboard',
-      path: '/dashboard/app',
-      icon: icon('ic_analytics'),
-    },
-    {
-      title: 'product',
-      path: '/dashboard/products',
-      icon: icon('ic_cart'),
-    },
-    {
-      title: 'blog',
-      path: '/dashboard/blog',
-      icon: icon('ic_blog'),
-    },
-    {
-      title: 'Not found',
-      path: '/404',
-      icon: icon('ic_disabled'),
-    },
-    {
-      title: 'Profile',
-      path: '/dashboard/profilePage',
-      icon: icon('ic_user'),
-    },
-  ];
-
-  const exportIlement = userType === 1 ? navConfig : userType === 2 ? navConfig1 : navConfig2;
+  const exportIlement = userType === 1 ? admin : userType === 2 ? donor : seeker;
 
   return exportIlement;
 }

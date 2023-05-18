@@ -164,8 +164,8 @@ export default function RegistrationForm() {
                             helperText={touched.userTypeID && errors.userTypeID}
                         >
                             <MenuItem key={0} value={0}> Select User Type</MenuItem>
-                            <MenuItem value={1}> Donor</MenuItem>
-                            <MenuItem value={2}> Seeker</MenuItem>
+                            <MenuItem value={2}> Donor</MenuItem>
+                            <MenuItem value={3}> Seeker</MenuItem>
                         </TextField>
                     </Stack>
                     <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>

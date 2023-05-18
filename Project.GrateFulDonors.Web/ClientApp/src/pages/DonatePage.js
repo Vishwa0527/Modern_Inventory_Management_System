@@ -9,7 +9,7 @@ import PRODUCTS from '../_mock/products';
 
 // ----------------------------------------------------------------------
 
-export default function ProductsPage() {
+export default function DonatePage() {
   const [openFilter, setOpenFilter] = useState(false);
 
   const handleOpenFilter = () => {
@@ -23,7 +23,7 @@ export default function ProductsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Products | GrateFulDonors </title>
+        <title> Donate | GrateFulDonors </title>
       </Helmet>
 
       <Container>

@@ -21,5 +21,12 @@ namespace Project.GrateFulDonors.API.Controllers
         {
             return await seekerService.GetAllSeekerLength();
         }
+
+        [HttpGet]
+        [Route("GetCurrentSeekerID")]
+        public async Task<GrateFulDonorsResponse> GetCurrentSeekerID(int UserID)
+        {
+            return await seekerService.GetCurrentSeekerID(UserID);
+        }
     }
 }

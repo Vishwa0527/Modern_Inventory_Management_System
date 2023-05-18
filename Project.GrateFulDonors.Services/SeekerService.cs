@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace Project.GrateFulDonors.Services
 {
@@ -28,6 +29,27 @@ namespace Project.GrateFulDonors.Services
             {
                 var result = await UnitOfWork.Repository<GetSeekerLengthModel>().GetEntitiesBySPAsyncWithoutParameters("[Administration].[GetAllSeekerLength]");
                 return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        public async Task<GrateFulDonorsResponse> GetCurrentSeekerID(int UserID)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "UserID", Tuple.Create(UserID.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<SeekerIDModel>().GetEntityBySPAsync("[Administration].[GetCurrentSeekerID]", parameters);
+                return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+
             }
             catch (Exception ex)
             {
