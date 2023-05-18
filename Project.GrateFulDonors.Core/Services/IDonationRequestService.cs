@@ -1,4 +1,5 @@
 ﻿using Project.GrateFulDonors.Core.Common;
+using Project.GrateFulDonors.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Project.GrateFulDonors.Core.Services
 {
-    public interface ISeekerService
+    public interface IDonationRequestService
     {
-        Task<GrateFulDonorsResponse> GetAllSeekerLength();
-        Task<GrateFulDonorsResponse> GetCurrentSeekerID(int UserID);
+        Task<GrateFulDonorsResponse> SaveDonationRequest(DonationRequestSaveModel model);
     }
 }

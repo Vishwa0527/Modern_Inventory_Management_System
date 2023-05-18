@@ -7,24 +7,26 @@ import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
+import DonatePage from './pages/DonatePage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Registration from './pages/Registration';
 import ProfilePage from './pages/ProfilePage';
+import DonationRequestAdd from './pages/DonationRequestAdd';
 
 // ----------------------------------------------------------------------
 
-export default function Router({ role }) {
+export default function Router() {
   const routes = useRoutes([
     {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'user', element: role === 'admin' ? <UserPage /> : null },
-        { path: 'products', element: <ProductsPage /> },
+        { path: 'user', element: <UserPage /> },
+        { path: 'donate', element: <DonatePage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'profilePage', element: <ProfilePage /> },
+        { path: 'donationRequestAdd', element: <DonationRequestAdd /> },
       ],
     },
     {
