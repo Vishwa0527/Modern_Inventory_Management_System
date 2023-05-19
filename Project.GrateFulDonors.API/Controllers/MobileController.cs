@@ -21,5 +21,12 @@ namespace Project.GrateFulDonors.API.Controllers
         {
             return await mobileService.UpdateVerifyStatus(model);
         }
+
+        [HttpPost]
+        [Route("GetUserDetailsForProfile")]
+        public async Task<GrateFulDonorsResponse> GetUserDetailsForProfile(UpdateVerifyDetailsInputModel model)
+        {
+            return await mobileService.GetUserDetailsForProfile(model);
+        }
     }
 }

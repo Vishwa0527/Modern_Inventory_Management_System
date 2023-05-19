@@ -53,5 +53,34 @@ namespace Project.GrateFulDonors.Services
             }
 
         }
+
+        public async Task<GrateFulDonorsResponse> GetUserDetailsForProfile(UpdateVerifyDetailsInputModel model)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "UserID", Tuple.Create(model.UserID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "UserType", Tuple.Create(model.UserType.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<GetUserDetailsForProfileModel>().GetEntityBySPAsync("[Administration].[GetUserDetailsForProfile]", parameters);
+                if (result != null)
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), "User Retrieved Successfully", result);
+                }
+                else
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Error.ToString(), "No Records to display", result);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
     }
 }

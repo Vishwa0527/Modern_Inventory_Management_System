@@ -10,5 +10,6 @@ namespace Project.GrateFulDonors.Core.Services
     public interface IMobileService
     {
         Task<GrateFulDonorsResponse> UpdateVerifyStatus(UpdateVerifyDetailsInputModel model);
+        Task<GrateFulDonorsResponse> GetUserDetailsForProfile(UpdateVerifyDetailsInputModel model);
     }
 }
