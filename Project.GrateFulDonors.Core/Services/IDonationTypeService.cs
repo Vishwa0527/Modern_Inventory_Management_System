@@ -10,5 +10,6 @@ namespace Project.GrateFulDonors.Core.Services
     {
         Task<GrateFulDonorsResponse> GetAllDonationTypeLength();
         Task<GrateFulDonorsResponse> GetDonationTypesForTheDropDown();
+        Task<GrateFulDonorsResponse> GetDonationTypeID(int userID);
     }
 }

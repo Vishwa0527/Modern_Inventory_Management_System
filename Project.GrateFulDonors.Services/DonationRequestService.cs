@@ -8,6 +8,8 @@ using System.Text;
 using Project.GrateFulDonors.Core.Models;
 using System.Data;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Reflection;
 
 namespace Project.GrateFulDonors.Services
 {
@@ -48,6 +50,34 @@ namespace Project.GrateFulDonors.Services
                 else
                 {
                     return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Error.ToString(), "Donation Request Failed", result);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        public async Task<GrateFulDonorsResponse> DonationRequestDetailsGet(int DonationTypeID)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "DonationTypeID", Tuple.Create(DonationTypeID.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<DonationRequestGetModel>().GetEntitiesBySPAsync("[Administration].[GetAllDonationRequestsByDonationType]", parameters);
+                if (result.Count() > 0)
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), "Donation Request Details Retrieved Sucessfully", result);
+                }
+                else
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Error.ToString(), "No Records to Display", result);
                 }
 
             }

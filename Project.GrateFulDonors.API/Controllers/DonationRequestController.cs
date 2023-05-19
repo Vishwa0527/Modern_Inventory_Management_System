@@ -23,5 +23,13 @@ namespace Project.GrateFulDonors.API.Controllers
             return await donationRequestService.SaveDonationRequest(model);
         }
 
+
+        [HttpGet]
+        [Route("DonationRequestDetailsGet")]
+        public async Task<GrateFulDonorsResponse> DonationRequestDetailsGet(int DonationTypeID)
+        {
+            return await donationRequestService.DonationRequestDetailsGet(DonationTypeID);
+        }
+
     }
 }

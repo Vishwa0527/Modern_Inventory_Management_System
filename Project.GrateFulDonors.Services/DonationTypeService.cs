@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using Project.GrateFulDonors.Core.Models;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace Project.GrateFulDonors.Services
 {
@@ -43,6 +44,25 @@ namespace Project.GrateFulDonors.Services
             try
             {
                 var result = await UnitOfWork.Repository<GetDonationTypesForDropDownModel>().GetEntitiesBySPAsyncWithoutParameters("[Administration].[GetDonationTypesForTheDropDown]");
+                return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        public async Task<GrateFulDonorsResponse> GetDonationTypeID(int userID)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "UserID", Tuple.Create(userID.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+                var result = await UnitOfWork.Repository<GetDonationTypeIDModel>().GetEntityBySPAsync("[Administration].[GetDonationTypeIDByUserID]", parameters);
                 return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
             }
             catch (Exception ex)
