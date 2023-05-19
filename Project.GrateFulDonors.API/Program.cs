@@ -4,6 +4,7 @@ using Project.Core.Data;
 using Project.GrateFulDonors.API.Extensions;
 using Project.GrateFulDonors.Core;
 using Project.GrateFulDonors.Dapper;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+StripeConfiguration.ApiKey = "sk_test_26PHem9AhJZvU623DfE1x4sd";
 
 var app = builder.Build();
 string ReactWebServerUrl = configuration["AppSettings:ClientDomain"];

@@ -14,5 +14,6 @@ namespace Project.GrateFulDonors.Core.Models
         public string Address { get; set; }
         public int UserID { get; set; }
         public int VerifyStatus { get; set; }
+        public string QRTagNumber { get; set; }
     }
 }

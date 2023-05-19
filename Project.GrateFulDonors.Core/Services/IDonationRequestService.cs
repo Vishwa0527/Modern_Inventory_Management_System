@@ -10,5 +10,6 @@ namespace Project.GrateFulDonors.Core.Services
     public interface IDonationRequestService
     {
         Task<GrateFulDonorsResponse> SaveDonationRequest(DonationRequestSaveModel model);
+        Task<GrateFulDonorsResponse> DonationRequestDetailsGet(int DonationTypeID);
     }
 }

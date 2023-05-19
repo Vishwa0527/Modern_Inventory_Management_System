@@ -73,7 +73,7 @@ namespace Project.GrateFulDonors.Services
         public async Task<GrateFulDonorsResponse> Registration(UserRegistrationInsertModel model)
         {
             var passwordEncrypted = PasswordEncrypt(model.Password);
-            if (model.UserTypeID == 1)
+            if (model.UserTypeID == 2)
             {
                 var configath = configuration.GetSection("UserImagePath:Path").Value;
                 var directoryPath = configuration.GetSection("UserImagePath:Directry").Value;

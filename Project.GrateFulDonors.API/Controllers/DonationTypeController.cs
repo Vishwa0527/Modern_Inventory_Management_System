@@ -28,5 +28,12 @@ namespace Project.GrateFulDonors.API.Controllers
         {
             return await donationTypeService.GetDonationTypesForTheDropDown();
         }
+
+        [HttpGet]
+        [Route("GetDonationTypeID")]
+        public async Task<GrateFulDonorsResponse> GetDonationTypeID(int userID)
+        {
+            return await donationTypeService.GetDonationTypeID(userID);
+        }
     }
 }
