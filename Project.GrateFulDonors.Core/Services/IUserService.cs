@@ -13,5 +13,6 @@ namespace Project.GrateFulDonors.Core.Services
         Task<GrateFulDonorsResponse> Login(UserLoginModel model);
         Task<GrateFulDonorsResponse> Registration(UserRegistrationInsertModel model);
         Task<GrateFulDonorsResponse> GetUserDetailsByUserID(int UserID);
+        Task<GrateFulDonorsResponse> GetUserImageByUserID(int UserID);
     }
 }

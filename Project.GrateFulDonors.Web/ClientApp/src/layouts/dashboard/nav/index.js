@@ -38,6 +38,8 @@ Nav.propTypes = {
 export default function Nav({ openNav, onCloseNav }) {
   const navConfig = DashboardNav();
   const [userId, setUserId] = useState(null);
+  const [imageData, setImageData] = useState([]);
+  const [imageURL, setImageURL] = useState(null);
   const [userData, setUserData] = useState({
     userName: "",
     email: "",
@@ -54,6 +56,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
   useEffect(() => {
     GetUserDetailsByUserID();
+    GetUserImageData();
   }, [userId]);
 
   useEffect(() => {
@@ -77,6 +80,25 @@ export default function Nav({ openNav, onCloseNav }) {
     });
   }
 
+  async function GetUserImageData() {
+    if (userId !== 0) {
+      const result = await axios.get('https://localhost:7211/api/User/GetUserImageByUserID', {
+        params: {
+          userId: userId
+        }
+      });
+
+      setImageData(result.data.data);
+      CreateBase64URL(result.data.data.image);
+    }
+
+  }
+
+  function CreateBase64URL(image) {
+    const imageUrl = `data:image/jpeg;base64,${image}`;
+    setImageURL(imageUrl)
+  }
+
   const renderContent = (
     <Scrollbar
       sx={{
@@ -91,7 +113,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            <Avatar src={account.photoURL} alt="photoURL" />
+            <Avatar src={imageURL} alt="photoURL" />
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>

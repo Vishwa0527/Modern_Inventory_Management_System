@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { Helmet } from 'react-helmet-async';
+import Chip from '@mui/material/Chip';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -37,6 +39,70 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ProfilePage() {
     const classes = useStyles();
+    const [userId, setUserId] = useState(null);
+    const [userData, setUserData] = useState({
+        userName: "",
+        email: "",
+        userType: 0
+    });
+    const [profileData, setProfileData] = useState([]);
+    const [imageData, setImageData] = useState([]);
+
+    useEffect(() => {
+        const userIdFromStorage = localStorage.getItem('userId');
+        setUserId(userIdFromStorage);
+    }, []);
+
+    useEffect(() => {
+        if (userId != 0) {
+            GetUserDetailsByUserID();
+        }
+
+    }, [userId]);
+
+    useEffect(() => {
+        if (userData.userType != 0) {
+            GetUserProfileDetailsByUserID();
+            GetUserImageData();
+        }
+    }, [userData.userType]);
+
+    async function GetUserDetailsByUserID() {
+        const result = await axios.get('https://localhost:7211/api/User/GetUserDetailsByUserID', {
+            params: {
+                userId: userId
+            }
+        });
+
+        setUserData({
+            userName: result.data.data.userName,
+            email: result.data.data.email,
+            userType: result.data.data.userType
+        });
+    }
+
+    async function GetUserImageData() {
+        if (userId !== 0) {
+            const result = await axios.get('https://localhost:7211/api/User/GetUserImageByUserID', {
+                params: {
+                    userId: userId
+                }
+            });
+
+            setImageData(result.data.data)
+        }
+    }
+
+    async function GetUserProfileDetailsByUserID() {
+        let model = {
+            userID: parseInt(userId),
+            userType: userData.userType
+        }
+        const result = await axios.post('https://localhost:7211/api/Mobile/GetUserDetailsForProfile', model);
+        setProfileData(result.data.data);
+        return;
+    }
+
 
     return (
         <div className={classes.root}>
@@ -48,14 +114,20 @@ export default function ProfilePage() {
                 <Grid item xs={12} md={4} align="center">
                     <Avatar
                         alt="Profile Picture"
-                        src="/static/images/avatar/1.jpg"
+                        src={`data:image/jpeg;base64, ${imageData.image}`}
                         className={classes.avatar}
                     />
+
                     <Typography variant="h5" component="h1" className={classes.name}>
-                        Jane Doe
+                        {profileData.name}
                     </Typography>
                     <Typography variant="subtitle1" className={classes.subtitle}>
-                        Creative Designer
+                        {profileData.userType}
+                    </Typography>
+                    <Typography variant="subtitle1" className={classes.subtitle}>
+                        {profileData.verifyStatus == 2 ?
+                            <Chip label="Verified" color="success" />
+                            : <Chip label="Not Verified" color="error" />}
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={8}>

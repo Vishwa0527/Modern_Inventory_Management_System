@@ -28,6 +28,8 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [userId, setUserId] = useState(null);
+  const [imageData, setImageData] = useState([]);
+  const [imageURL, setImageURL] = useState(null);
   const [userData, setUserData] = useState({
     userName: "",
     email: ""
@@ -41,6 +43,8 @@ export default function AccountPopover() {
 
   useEffect(() => {
     GetUserDetailsByUserID();
+    GetUserImageData();
+
   }, [userId]);
 
   const onClickHandler = () => navigate(`/login`)
@@ -64,6 +68,24 @@ export default function AccountPopover() {
     });
   }
 
+  async function GetUserImageData() {
+    if (userId !== 0) {
+      const result = await axios.get('https://localhost:7211/api/User/GetUserImageByUserID', {
+        params: {
+          userId: userId
+        }
+      });
+
+      setImageData(result.data.data);
+      CreateBase64URL(result.data.data.image);
+    }
+
+  }
+
+  function CreateBase64URL(image) {
+    const imageUrl = `data:image/jpeg;base64,${image}`;
+    setImageURL(imageUrl)
+  }
 
   return (
     <>
@@ -84,7 +106,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={imageURL} alt="photoURL" />
       </IconButton>
 
       <Popover
