@@ -42,5 +42,12 @@ namespace Project.GrateFulDonors.API.Controllers
         {
             return await userService.GetUserDetailsByUserID(UserID);
         }
+
+        [HttpGet]
+        [Route("GetUserImageByUserID")]
+        public async Task<GrateFulDonorsResponse> GetUserImageByUserID(int UserID)
+        {
+            return await userService.GetUserImageByUserID(UserID);
+        }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Project.GrateFulDonors.Core.Models;
 using System.Linq;
 using Project.GrateFulDonors.Dapper;
+using System.IO;
 
 namespace Project.GrateFulDonors.Services
 {
@@ -144,6 +145,36 @@ namespace Project.GrateFulDonors.Services
             var result = Encoding.UTF8.GetString(base64EncodeBytes);
             result = result.Substring(0, result.Length - Key.Length);
             return result;
+        }
+
+        public async Task<GrateFulDonorsResponse> GetUserImageByUserID(int UserID)
+        {
+            if (UserID != 0)
+            {
+                try
+                {
+                    var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                    {
+                        { "UserID", Tuple.Create(UserID.ToString(), DbType.Int32, ParameterDirection.Input) }
+                    };
+
+                    var result = await UnitOfWork.Repository<GetUserImageModel>().GetEntityBySPAsync("[Administration].[GetUserImageByUserID]", parameters);
+                    byte[] imageArray = File.ReadAllBytes(Path.Combine(result.Image));
+                    result.Image = Convert.ToBase64String(imageArray);
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+            }
+            else
+            {
+                return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, null);
+            }
+            
         }
     }
 

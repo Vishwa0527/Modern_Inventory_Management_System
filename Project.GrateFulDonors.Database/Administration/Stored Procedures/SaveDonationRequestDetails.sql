@@ -16,6 +16,7 @@ AS
 BEGIN
 	INSERT INTO [Administration].[DonationRequest]
 		([SeekerID]
+		,[DonationTypeID]
 		,[Description]
 		,[RequestBefore]
 		,[Amount]
@@ -24,6 +25,7 @@ BEGIN
 		,[CreatedDate]
 		,[DonationRequestStatus])
 	VALUES(@SeekerID
+		,@DonationTypeID
 		,@Description
 		,@RequiredBefore
 		,@Amount

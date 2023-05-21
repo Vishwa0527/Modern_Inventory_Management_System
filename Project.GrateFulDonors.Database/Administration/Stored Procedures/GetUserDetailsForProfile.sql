@@ -17,7 +17,8 @@ BEGIN
 	D.DOB,
 	D.Address,
 	U.UserID,
-	U.VerifyStatus
+	U.VerifyStatus,
+	U.QRTagNumber
 	FROM [Administration].[User] U
 	INNER JOIN [Administration].[Donor] D ON D.UserID = U.UserID
 	WHERE U.UserID = @UserID
@@ -31,7 +32,8 @@ BEGIN
 	S.DOB,
 	S.Address,
 	U.UserID,
-	U.VerifyStatus
+	U.VerifyStatus,
+	U.QRTagNumber
 	FROM [Administration].[User] U
 	INNER JOIN [Administration].[Seeker] S ON S.UserID = U.UserID
 	WHERE U.UserID = @UserID
