@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { Grid, Container, Typography } from '@mui/material';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { ToastContainer, toast } from 'react-toastify';
-import { Stack, TextField } from '@mui/material';
+import { Stack, TextField, Box } from '@mui/material';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextareaAutosize from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
@@ -178,7 +178,7 @@ export default function DonationRequestAdd() {
     console.log("formik", formik.values)
 
     return (
-        <>
+        <Box>
             <Helmet>
                 <title> DonationRequest | GrateFulDonors </title>
             </Helmet>
@@ -282,6 +282,6 @@ export default function DonationRequestAdd() {
                     </Form>
                 </FormikProvider>
             </Container>
-        </>
+        </Box>
     );
 }

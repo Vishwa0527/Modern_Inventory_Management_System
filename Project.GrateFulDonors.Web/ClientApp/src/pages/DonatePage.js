@@ -140,7 +140,7 @@ export default function DonatePage() {
 
   }
   return (
-    <>
+    <Box>
       <Helmet>
         <title> Donate | GrateFulDonors </title>
       </Helmet>
@@ -153,7 +153,13 @@ export default function DonatePage() {
         {tableData.length == 0 ?
           <SearchNotFound searchQuery="Donation Requests" />
           :
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <Box
+            display="flex"
+            flexDirection={{ xs: 'column', sm: 'row' }}
+            alignItems="center"
+            justifyContent="center"
+            spacing={2}
+          >
             <Card style={{ justifycontent: 'center', width: '85rem' }} >
               <TableContainer component={Paper} >
                 <Table aria-label="simple table">
@@ -241,9 +247,9 @@ export default function DonatePage() {
                 </Table>
               </TableContainer>
             </Card>
-          </Stack>
+          </Box>
         }
       </Container >
-    </>
+    </Box>
   );
 }

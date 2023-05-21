@@ -4,6 +4,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
+import { Helmet } from 'react-helmet-async';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,6 +40,10 @@ export default function ProfilePage() {
 
     return (
         <div className={classes.root}>
+            <Helmet>
+                <title> Profile | GrateFulDonors </title>
+            </Helmet>
+
             <Grid container spacing={3}>
                 <Grid item xs={12} md={4} align="center">
                     <Avatar
