@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import * as Yup from 'yup';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+import Loader from '../../../pages/Loader';
 
 // ----------------------------------------------------------------------
 
@@ -37,11 +38,11 @@ export default function LoginForm() {
       return;
     }
     toast.success("Successfully Logged In", {
-      // onClose: () => navigate('/dashboard/app', { state: { userId: result.data.data[0].userID } })
+      autoClose: 1000,
       onClose: () => {
         const userId = result.data.data[0].userID;
         localStorage.setItem('userId', userId);
-        navigate('/dashboard/app');
+        navigate('/loader');
       }
     });
   }
