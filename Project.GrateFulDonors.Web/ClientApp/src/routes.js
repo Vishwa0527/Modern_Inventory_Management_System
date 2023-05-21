@@ -12,6 +12,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import Registration from './pages/Registration';
 import ProfilePage from './pages/ProfilePage';
 import DonationRequestAdd from './pages/DonationRequestAdd';
+import Loader from './pages/Loader';
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +52,10 @@ export default function Router() {
     {
       path: '*',
       element: <Navigate to="/404" replace />,
+    },
+    {
+      path: 'loader',
+      element: <Loader />,
     },
 
   ]);
