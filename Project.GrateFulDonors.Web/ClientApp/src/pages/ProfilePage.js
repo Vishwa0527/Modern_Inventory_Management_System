@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { Helmet } from 'react-helmet-async';
 import Chip from '@mui/material/Chip';
+import QRCode from 'react-qr-code';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -129,6 +130,11 @@ export default function ProfilePage() {
                             <Chip label="Verified" color="success" />
                             : <Chip label="Not Verified" color="error" />}
                     </Typography>
+                    <br />
+                    {profileData.verifyStatus == 1 ?
+                        <Typography variant="subtitle1" className={classes.subtitle}>
+                            <QRCode value={profileData.qrTagNumber} size={100} />
+                        </Typography> : null}
                 </Grid>
                 <Grid item xs={12} md={8}>
                     <Paper className={classes.paper}>

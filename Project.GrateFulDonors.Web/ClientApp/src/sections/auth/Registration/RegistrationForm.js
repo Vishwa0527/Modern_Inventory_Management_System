@@ -34,22 +34,24 @@ export default function RegistrationForm() {
         donationTypeID: 0,
         userTypeID: 0,
         confirmPassword: "",
-        email: ""
+        email: "",
+        contactNumber: ""
     });
     useEffect(() => {
         getDonationTypesForTheDropDown();
     }, []);
     const RegistrationSchema = Yup.object().shape({
-        nic: Yup.string().required('NIC is Required'),
+        nic: Yup.string().required('NIC is required'),
         firstName: Yup.string().required('First Name is required'),
-        userTypeID: Yup.number().min(1, 'User Type Required').required('User Type required'),
+        userTypeID: Yup.number().min(1, 'User Type required').required('User Type required'),
         password: Yup.string()
-            .required('Required')
+            .required('required')
             .min(8, 'Must be at least 8 characters')
             .max(20, 'Must be at most 20 characters'),
         confirmPassword: Yup.string()
-            .required('Required')
-            .oneOf([Yup.ref('password'), null], 'Passwords must match')
+            .required('required')
+            .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+        contactNumber: Yup.string().required('Contact Number is required')
     });
 
     async function registration(values, image) {
@@ -66,6 +68,7 @@ export default function RegistrationForm() {
             donationTypeID: values.donationTypeID,
             confirmPassword: values.confirmPassword,
             email: values.email,
+            contactNumber: values.contactNumber,
             image: image
         }
         const result = await axios.post('https://localhost:7211/api/User/Registration', model);
@@ -98,7 +101,8 @@ export default function RegistrationForm() {
             image: registrationData.image,
             donationTypeID: registrationData.donationTypeID,
             confirmPassword: registrationData.confirmPassword,
-            email: registrationData.email
+            email: registrationData.email,
+            contactNumber: registrationData.contactNumber
         },
         validationSchema: RegistrationSchema,
         onSubmit: (values) => {
@@ -220,6 +224,16 @@ export default function RegistrationForm() {
                         </TextField>
                     </Stack>
                     <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px', marginBottom: '25px' }} spacing={3}>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            label="Contact Number *"
+                            value={formik.values.contactNumber}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('contactNumber')}
+                            error={Boolean(touched.contactNumber && errors.contactNumber)}
+                            helperText={touched.contactNumber && errors.contactNumber}
+                        />
                         <TextField
                             select
                             fullWidth

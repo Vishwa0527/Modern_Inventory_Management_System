@@ -18,5 +18,6 @@ namespace Project.GrateFulDonors.Core.Models
         public int DonationTypeID { get; set; }
         public int UserTypeID { get; set; }
         public string ConfirmPassword { get; set; }
+        public string ContactNumber { get; set; }
     }
 }

@@ -14,5 +14,6 @@ namespace Project.GrateFulDonors.Core.Services
         Task<GrateFulDonorsResponse> Registration(UserRegistrationInsertModel model);
         Task<GrateFulDonorsResponse> GetUserDetailsByUserID(int UserID);
         Task<GrateFulDonorsResponse> GetUserImageByUserID(int UserID);
+        Task<GrateFulDonorsResponse> GetLastQRCodeNumber();
     }
 }

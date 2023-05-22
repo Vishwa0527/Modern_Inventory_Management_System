@@ -14,7 +14,7 @@ namespace Project.GrateFulDonors.Dapper
 {
     public static class SeekerRegistrationRepository
     {
-        public static async Task<int> SaveSeeker(this IRepositoryAsync<UserRegistrationInsertModel> repo, UserRegistrationInsertModel donorSaveModel, string configath, string directoryPath, string baseLink, string PasswordEncrypted)
+        public static async Task<int> SaveSeeker(this IRepositoryAsync<UserRegistrationInsertModel> repo, UserRegistrationInsertModel donorSaveModel, string configath, string directoryPath, string baseLink, string PasswordEncrypted, int incrementedNum)
         {
             using (var connection = repo.GetConnectionFactory().GetConnection())
             {
@@ -23,7 +23,7 @@ namespace Project.GrateFulDonors.Dapper
                 {
                     try
                     {
-                        DynamicParameters dynamicParametersGeneral = MapToSeekerUserDetails(donorSaveModel, PasswordEncrypted);
+                        DynamicParameters dynamicParametersGeneral = MapToSeekerUserDetails(donorSaveModel, PasswordEncrypted, incrementedNum);
 
                         await connection.QueryAsync<UserRegistrationInsertModel>("[Administration].[SeekerTypeUserDetailsSave]",
                         param: dynamicParametersGeneral,
@@ -108,7 +108,7 @@ namespace Project.GrateFulDonors.Dapper
         }
 
 
-        public static DynamicParameters MapToSeekerUserDetails(UserRegistrationInsertModel model, string PasswordEncrypted)
+        public static DynamicParameters MapToSeekerUserDetails(UserRegistrationInsertModel model, string PasswordEncrypted, int incrementedNum)
         {
             DynamicParameters dynamicParameters = new DynamicParameters();
 
@@ -116,6 +116,8 @@ namespace Project.GrateFulDonors.Dapper
             dynamicParameters.Add("UserName", model.FirstName, DbType.String, ParameterDirection.Input);
             dynamicParameters.Add("UserType", model.UserTypeID.ToString(), DbType.Int32, ParameterDirection.Input);
             dynamicParameters.Add("Email", model.Email == "" ? null : model.Email, DbType.String, ParameterDirection.Input);
+            dynamicParameters.Add("ContactNumber", model.ContactNumber.ToString(), DbType.String, ParameterDirection.Input);
+            dynamicParameters.Add("QRTagNumber", incrementedNum.ToString(), DbType.String, ParameterDirection.Input);
             dynamicParameters.Add("Password", PasswordEncrypted.ToString(), DbType.String, ParameterDirection.Input);
             dynamicParameters.Add("VerifyStatus", 1.ToString(), DbType.Int32, ParameterDirection.Input);
 

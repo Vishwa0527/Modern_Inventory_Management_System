@@ -73,13 +73,24 @@ namespace Project.GrateFulDonors.Services
 
         public async Task<GrateFulDonorsResponse> Registration(UserRegistrationInsertModel model)
         {
+            var lastrecordValue = await GetLastQRCodeNumber();
+            var lastNumber = (int)lastrecordValue.Data;
+            int incrementedNum;
+            if (lastNumber != 0)
+            {
+                incrementedNum = lastNumber + 1;
+            }
+            else
+            {
+                incrementedNum = 01000000;
+            }
             var passwordEncrypted = PasswordEncrypt(model.Password);
             if (model.UserTypeID == 2)
             {
                 var configath = configuration.GetSection("UserImagePath:Path").Value;
                 var directoryPath = configuration.GetSection("UserImagePath:Directry").Value;
                 var baseLink = configuration.GetSection("UserImagePath:FileLinkBase").Value;
-                int DonorID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveDonor(model, configath, directoryPath, baseLink, passwordEncrypted);
+                int DonorID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveDonor(model, configath, directoryPath, baseLink, passwordEncrypted, incrementedNum);
                 if (DonorID > 0)
                 {
                     return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, DonorID);
@@ -94,7 +105,7 @@ namespace Project.GrateFulDonors.Services
                 var configath = configuration.GetSection("UserImagePath:Path").Value;
                 var directoryPath = configuration.GetSection("UserImagePath:Directry").Value;
                 var baseLink = configuration.GetSection("UserImagePath:FileLinkBase").Value;
-                int SeekerID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveSeeker(model, configath, directoryPath, baseLink, passwordEncrypted);
+                int SeekerID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveSeeker(model, configath, directoryPath, baseLink, passwordEncrypted, incrementedNum);
                 if (SeekerID > 0)
                 {
                     return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, SeekerID);
@@ -175,6 +186,26 @@ namespace Project.GrateFulDonors.Services
                 return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, null);
             }
             
+        }
+
+        public async Task<GrateFulDonorsResponse> GetLastQRCodeNumber()
+        {
+            try
+            {
+                var result = await UnitOfWork.Repository<GetLastQRTagNumber>().GetEntitiesBySPAsyncWithoutParameters("[Administration].[GetLastQRTagNumber]");
+                var firstItem = result.FirstOrDefault();
+                if (firstItem != null)
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, firstItem.QRTagNumber);
+                }
+                return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, 0);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
     }
 
