@@ -10,11 +10,11 @@ namespace Project.DataAccess.Dapper
 {
     public abstract class UnitOfWork : IUnitOfWorkAsync
     {
-        private IGrateFulDonorsConnectionFactory connectionFactory;
+        private IMIMSConnectionFactory connectionFactory;
 
         protected Dictionary<string, dynamic> Repositories;
 
-        public UnitOfWork(IGrateFulDonorsConnectionFactory connectionFactory)
+        public UnitOfWork(IMIMSConnectionFactory connectionFactory)
         {
             this.connectionFactory = connectionFactory;
             Repositories = new Dictionary<string, dynamic>();

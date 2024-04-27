@@ -12,9 +12,9 @@ namespace Project.DataAccess.Dapper
 {
     public class Repository<TEntity> : IRepositoryAsync<TEntity> where TEntity : class
     {
-        private IGrateFulDonorsConnectionFactory connectionFactory;
+        private IMIMSConnectionFactory connectionFactory;
 
-        public Repository(IGrateFulDonorsConnectionFactory connectionFactory)
+        public Repository(IMIMSConnectionFactory connectionFactory)
         {
             this.connectionFactory = connectionFactory;
         }
@@ -763,7 +763,7 @@ namespace Project.DataAccess.Dapper
             }
         }
 
-        public IGrateFulDonorsConnectionFactory GetConnectionFactory()
+        public IMIMSConnectionFactory GetConnectionFactory()
         {
             return connectionFactory;
         }

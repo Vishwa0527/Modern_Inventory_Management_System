@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Project.Core.Data
 {
-    public interface IGrateFulDonorsConnectionFactory
+    public interface IMIMSConnectionFactory
     {
         IDbConnection GetConnection();
     }

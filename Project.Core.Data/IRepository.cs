@@ -33,6 +33,6 @@ namespace Project.Core.Data
         bool ExecuteSPWithBooleanInputOutput(string storedProcedureName, Dictionary<string, Tuple<string, DbType, ParameterDirection>> parameters);
 
         void ExecuteSP(string storedProcedureName, Dictionary<string, Tuple<string, DbType, ParameterDirection>> parameters);
-        IGrateFulDonorsConnectionFactory GetConnectionFactory();
+        IMIMSConnectionFactory GetConnectionFactory();
     }
 }
