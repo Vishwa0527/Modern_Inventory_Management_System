@@ -13,7 +13,7 @@ export default function Loader() {
             renderer: 'svg',
             loop: true,
             autoplay: true,
-            animationData: require('../animation.json')
+            animationData: require('../MIMS_Lottie.json')
         });
     }, []);
 

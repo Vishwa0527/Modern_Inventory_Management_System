@@ -73,7 +73,7 @@ export default function DashboardAppPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Total Donors" total={donorLegnth} icon={'ant-design:android-filled'} />
           </Grid>
 
@@ -87,34 +87,34 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Donation Types" total={donationTypeLegnth} color="error" icon={'ant-design:bug-filled'} />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Website Visits"
-              subheader="(+43%) than last year"
+              title="Sales Chart"
+              subheader="Best Sales in February"
               chartLabels={[
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
+                '07/01/2023',
+                '08/01/2023',
+                '09/01/2023',
+                '10/01/2023',
+                '11/01/2023',
+                '12/01/2023',
+                '01/01/2024',
+                '02/01/2024',
+                '03/01/2024',
+                '04/01/2024',
+                '05/01/2024',
               ]}
               chartData={[
                 {
-                  name: 'Donors',
+                  name: 'Sales',
                   type: 'column',
                   fill: 'solid',
                   data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
                 },
                 {
-                  name: 'Seekers',
+                  name: 'Demand',
                   type: 'area',
                   fill: 'gradient',
                   data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
@@ -125,12 +125,14 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="Now in Stock"
               chartData={[
-                { label: 'Uva', value: 10 },
-                { label: 'Western', value: 20 },
-                { label: 'Central', value: 30 },
-                { label: 'Sothern', value: 40 },
+                { label: 'Fridge', value: 10 },
+                { label: 'TV', value: 20 },
+                { label: 'Sound Systems', value: 25 },
+                { label: 'Iorn', value: 15 },
+                { label: 'Rice Cooker', value: 10 },
+                { label: 'Laptop', value: 18 },
               ]}
               chartColors={[
                 theme.palette.primary.main,
@@ -141,7 +143,7 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
               title="Conversion Rates"
               subheader="(+43%) than last year"
@@ -158,8 +160,8 @@ export default function DashboardAppPage() {
                 { label: 'United Kingdom', value: 1380 },
               ]}
             />
-          </Grid>
-
+          </Grid> */}
+{/* 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current donation Types"
@@ -171,8 +173,8 @@ export default function DashboardAppPage() {
               ]}
               chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
             />
-          </Grid>
-
+          </Grid> */}
+{/* 
           <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="News Update"
@@ -184,9 +186,9 @@ export default function DashboardAppPage() {
                 postedAt: faker.date.recent(),
               }))}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={4}>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <AppOrderTimeline
               title="Donation Timeline"
               list={[...Array(5)].map((_, index) => ({
@@ -202,9 +204,9 @@ export default function DashboardAppPage() {
                 time: faker.date.past(),
               }))}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={4}>
+          {/* <Grid item xs={12} md={6} lg={4}>
             <AppTrafficBySite
               title="Traffic by Site"
               list={[
@@ -243,7 +245,7 @@ export default function DashboardAppPage() {
                 { id: '5', label: 'Spread the system around the country' },
               ]}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </>

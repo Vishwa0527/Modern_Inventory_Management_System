@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Stack, AppBar, Toolbar, IconButton } from '@mui/material';
+import { Box, Stack, AppBar, Toolbar, IconButton, Grid, Typography } from '@mui/material';
 // utils
 import { bgBlur } from '../../../utils/cssStyles';
 // components
@@ -54,10 +54,12 @@ export default function Header({ onOpenNav }) {
             display: { lg: 'none' },
           }}
         >
+          {/* <Grid img src={"/assets/mims.png"} alt="image">
+          </Grid> */}
           <Iconify icon="eva:menu-2-fill" />
         </IconButton>
 
-        <Searchbar />
+        {/* <Searchbar /> */}
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack
@@ -68,8 +70,9 @@ export default function Header({ onOpenNav }) {
             sm: 1,
           }}
         >
-          <LanguagePopover />
-          <NotificationsPopover />
+
+          {/* <LanguagePopover /> */}
+          {/* <NotificationsPopover /> */}
           <AccountPopover />
         </Stack>
       </StyledToolbar>

@@ -2,6 +2,13 @@ import { useRouteLoaderData } from 'react-router-dom';
 import SvgColor from '../../../components/svg-color';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import CategoryIcon from '@mui/icons-material/Category';
+import AbcIcon from '@mui/icons-material/Abc';
+import BadgeIcon from '@mui/icons-material/Badge';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
@@ -34,22 +41,22 @@ function DashboardNav() {
       icon: icon('ic_analytics'),
     },
     {
-      title: 'user',
+      title: 'Category',
       path: '/dashboard/user',
       icon: icon('ic_user'),
     },
     {
-      title: 'blog',
+      title: 'SubCategory',
       path: '/dashboard/blog',
       icon: icon('ic_blog'),
     },
     {
-      title: 'Profile',
+      title: 'Dealer',
       path: '/dashboard/profilePage',
       icon: icon('ic_usergroup'),
     },
     {
-      title: 'Donation Request',
+      title: 'Item',
       path: '/dashboard/donationRequestAdd',
       icon: icon('ic_heart'),
     }
@@ -62,25 +69,40 @@ function DashboardNav() {
       icon: icon('ic_analytics'),
     },
     {
-      title: 'Donate',
-      path: '/dashboard/donate',
-      icon: icon('ic_heart'),
+      title: 'Category',
+      path: '/dashboard/category',
+      icon: <CategoryIcon />,
     },
     {
-      title: 'blog',
-      path: '/dashboard/blog',
-      icon: icon('ic_blog'),
+      title: 'Sub Category',
+      path: '/dashboard/SubCategory',
+      icon: <AbcIcon />,
     },
     {
-      title: 'Profile',
-      path: '/dashboard/profilePage',
-      icon: icon('ic_usergroup'),
+      title: 'Dealer',
+      path: '/dashboard/Dealer',
+      icon: <BadgeIcon />,
     },
     {
-      title: 'Donation Request',
-      path: '/dashboard/donationRequestAdd',
-      icon: icon('ic_heart'),
+      title: 'Item',
+      path: '/dashboard/Item',
+      icon: <AssessmentIcon />,
     },
+    {
+      title: 'Sale',
+      path: '/dashboard/Sales',
+      icon: <AttachMoneyIcon />,
+    },
+    {
+      title: 'Report',
+      path: '/dashboard/Page404',
+      icon: <AutoStoriesIcon />,
+    },
+    // {
+    //   title: 'Category Add',
+    //   path: '/dashboard/categoryAdd',
+    //   icon: icon('ic_heart'),
+    // }
   ];
 
   const seeker = [
@@ -90,17 +112,17 @@ function DashboardNav() {
       icon: icon('ic_analytics'),
     },
     {
-      title: 'blog',
+      title: 'Category',
       path: '/dashboard/blog',
       icon: icon('ic_blog'),
     },
     {
-      title: 'Profile',
+      title: 'Sub Category',
       path: '/dashboard/profilePage',
       icon: icon('ic_usergroup'),
     },
     {
-      title: 'Donation Request',
+      title: 'Item',
       path: '/dashboard/donationRequestAdd',
       icon: icon('ic_heart'),
     },

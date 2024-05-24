@@ -121,7 +121,7 @@ export default function Nav({ openNav, onCloseNav }) {
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {userData.userType == 1 ? "Administrator" : userData.userType == 2 ? "Donor" : userData.userType == 3 ? "Seeker" : null}
+                {userData.userType == 1 ? "Administrator" : userData.userType == 2 ? "Administrator" : userData.userType == 3 ? "Seeker" : null}
               </Typography>
             </Box>
           </StyledAccount>

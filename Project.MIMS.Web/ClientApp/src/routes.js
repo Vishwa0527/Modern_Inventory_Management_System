@@ -3,14 +3,22 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import BlogPage from './pages/BlogPage';
+// import BlogPage from './pages/BlogPage';
+import SubCategoryPage from './pages/SubCategory';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import DonatePage from './pages/DonatePage';
+import CategoryPage from './pages/CategoryPage';
+import CategoryAddPage from './pages/CategoryAdd';
+import SubCategoryAddPage from './pages/SubCategoryAdd';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Registration from './pages/Registration';
-import ProfilePage from './pages/ProfilePage';
+import DealerPage from './pages/Dealer';
+import ItemPage from './pages/Item';
+import DealerAddPage from './pages/DealerAdd';
+import ItemAddPage from './pages/ItemAdd';
+import SalesPage from './pages/Sales';
+// import ProfilePage from './pages/ProfilePage';
 import DonationRequestAdd from './pages/DonationRequestAdd';
 import Loader from './pages/Loader';
 
@@ -24,9 +32,16 @@ export default function Router() {
       children: [
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
-        { path: 'donate', element: <DonatePage /> },
-        { path: 'blog', element: <BlogPage /> },
-        { path: 'profilePage', element: <ProfilePage /> },
+        { path: 'category', element: <CategoryPage /> },
+        { path: 'categoryAdd', element: <CategoryAddPage /> },
+        { path: 'SubCategoryAdd', element: <SubCategoryAddPage /> },
+        { path: 'SubCategory', element: <SubCategoryPage /> },
+        { path: 'Dealer', element: <DealerPage /> },
+        { path: 'Item', element: <ItemPage /> },
+        { path: 'DealerAdd', element: <DealerAddPage /> },
+        { path: 'ItemAdd', element: <ItemAddPage /> },
+        { path: 'Sales', element: <SalesPage /> },
+        // { path: 'profilePage', element: <ProfilePage /> },
         { path: 'donationRequestAdd', element: <DonationRequestAdd /> },
       ],
     },

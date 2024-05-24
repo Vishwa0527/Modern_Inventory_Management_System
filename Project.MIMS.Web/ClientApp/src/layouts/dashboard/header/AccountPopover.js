@@ -89,6 +89,9 @@ export default function AccountPopover() {
 
   return (
     <>
+      <Typography>
+        <img style={{ margin: 'auto', display: 'block', width: '80%' }} src="/assets/mims.png" alt="notificationbar" />
+      </Typography>
       <IconButton
         onClick={handleOpen}
         sx={{
@@ -153,6 +156,7 @@ export default function AccountPopover() {
           Logout
         </MenuItem>
       </Popover>
+
     </>
   );
 }
