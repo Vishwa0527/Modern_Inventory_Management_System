@@ -1,13 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useEffect, useState } from 'react';
 // @mui
-import { Container, Stack, Typography, Card, MenuItem, TextField, Button } from '@mui/material';
+import { Stack, Typography, Card, TextField, Button } from '@mui/material';
 import { IconButton, Box } from '@material-ui/core';
 import axios from 'axios';
 import Divider from '@mui/material/Divider';
-import SearchNotFound from '../SearchNotFound';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -16,20 +13,9 @@ import PropTypes, { func } from 'prop-types'
 import { useTheme } from '@mui/material/styles'
 import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
-import PerfectScrollbar from 'perfect-scrollbar';
 import CardContent from '@material-ui/core/CardContent';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link as RouterLink, useNavigate, useHref } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 // ----------------------------------------------------------------------
@@ -96,15 +82,12 @@ TablePaginationActions.propTypes = {
 
 export default function CategoryAddPage() {
     const navigate = useNavigate();
-    const [openFilter, setOpenFilter] = useState(false);
     const [userId, setUserId] = useState(null);
     const [donationTypeID, setDonationTypeID] = useState(0);
-    const [dealers, setDealers] = useState([]);
     const [tableData, setTableData] = useState([]);
     const [formData, setFormData] = useState({
         categoryCode: '',
-        dealerID: 0,
-        farmerID: 0,
+        categoryName: ''
 
     });
 
@@ -125,68 +108,45 @@ export default function CategoryAddPage() {
         }
     }, [donationTypeID]);
 
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-
     const formik = useFormik({
         initialValues: {
-            dealerID: formData.dealerID,
+            categoryName: formData.categoryName,
             categoryCode: formData.categoryCode
-            // operationEntityID: selectedOptionsFCC,
-            // farmerID: selectedOptionsFarmer,
-            // fromDate: date1.toISOString().split('T')[0],
-            // toDate: date2.toISOString().split('T')[0]
         },
 
         validationSchema: () => {
             return Yup.object().shape({
-                // groupID: Yup.number().min(1, 'Please Select Group').required('Group required'),
-                // operationEntityID: Yup.array()
-                //     .min(1, 'Please select at least one Fresh collection center')
-                //     .required('Please select at least one Fresh collection center'),
-                // farmerID: Yup.array()
-                //     .min(1, 'Please select at least one Farmer')
-                //     .required('Please select at least one Farmer'),
-                // toDate: Yup.date().min(1).min(1, 'Please Select End date').required('End date required'),
-                // fromDate: Yup.date().min(1).min(1, 'Please Select Start Date').required('Start Date required')
+                categoryName: Yup.string().required("Please fill the category name"),
+                categoryCode: Yup.string().required("Please fill the category code"),
             });
         },
 
         onSubmit: (values) => {
-            SubmitForm();
+            SubmitForm(values);
         }
     }
     );
 
-    async function SubmitForm() {
+    async function SubmitForm(values) {
         let model = {
-
+            categoryName: values.categoryName,
+            categoryCode: values.categoryCode,
+            createdBy: userId == null ? 0 : parseInt(userId)
         }
-        const result = await axios.post('https://localhost:7211/api/User/Registration', model);
+        const result = await axios.post('https://localhost:7211/api/Item/ItemCategorySave', model);
         if (result.data.statusCode === "Error") {
-            toast.error("Error Occured in Category Save");
+            toast.error(result.data.message);
             return;
         }
         else {
-            toast.success("Category Successfully Saved", {
-                onClose: () => navigate('/login', { replace: true })
+            toast.success(result.data.message, {
+                autoClose: 500,
+                onClose: () => navigate('/dashboard/category', { replace: true })
             });
         }
     }
 
-    const { errors, touched, setValues, handleSubmit, isSubmitting, getFieldProps, values } = formik;
-
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
+    const { errors, touched, handleSubmit, getFieldProps } = formik;
 
     async function GetDonationTypeID() {
         const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
@@ -204,16 +164,6 @@ export default function CategoryAddPage() {
         navigate('/dashboard/category');
     }
 
-    function generateDealerDropDownMenu(data) {
-        let items = []
-        if (data != null) {
-            data.forEach(x => {
-                items.push(x.isActive == true ? <MenuItem key={x.dealerID} value={x.dealerID}>{x.dealerName}</MenuItem> : null)
-            });
-        }
-        return items
-    }
-
     return (
         <Box mt={0}>
             <Card>
@@ -223,6 +173,10 @@ export default function CategoryAddPage() {
                 <Divider />
                 <CardContent>
                     <FormikProvider value={formik}>
+                        <ToastContainer
+                            position="bottom-right"
+                            pauseOnHover
+                        />
                         <Form
                             autoComplete="off"
                             disabled={!(formik.isValid && formik.dirty)}
@@ -241,7 +195,7 @@ export default function CategoryAddPage() {
                                 <TextField
                                     fullWidth
                                     size="small"
-                                    label="Category Name"
+                                    label="Category Name *"
                                     value={formik.values.categoryName}
                                     onChange={formik.handleChange}
                                     {...getFieldProps('categoryName')}
@@ -251,63 +205,14 @@ export default function CategoryAddPage() {
                                 <TextField
                                     fullWidth
                                     size="small"
-                                    label="Category Code"
+                                    label="Category Code *"
                                     value={formik.values.categoryCode}
                                     onChange={formik.handleChange}
                                     {...getFieldProps('categoryCode')}
                                     error={Boolean(touched.categoryCode && errors.categoryCode)}
                                     helperText={touched.categoryCode && errors.categoryCode}
                                 />
-                                <TextField
-                                    select
-                                    fullWidth
-                                    size="small"
-                                    label="Dealer "
-                                    value={formik.values.dealerID}
-                                    onChange={formik.handleChange}
-                                    {...getFieldProps('dealerID')}
-                                    error={Boolean(touched.dealerID && errors.dealerID)}
-                                    helperText={touched.dealerID && errors.dealerID}
-                                >
-                                    <MenuItem key={0} value={0}> Select Dealer</MenuItem>
-                                    {generateDealerDropDownMenu(dealers)}
-                                </TextField>
                             </Stack>
-                            {/* <Grid container spacing={3}>
-                                <Grid item md={4} xs={12}>
-                                    <InputLabel shrink id="jobCategoryCode">
-                                        Category Code *
-                                    </InputLabel>
-                                    <TextField
-                                        fullWidth
-                                        name="jobCategoryCode"
-                                        size='small'
-                                        variant="outlined"
-                                    />
-                                </Grid>
-                                <Grid item md={4} xs={12}>
-                                    <InputLabel shrink id="jobCategoryName">
-                                        Dealer Name
-                                    </InputLabel>
-                                    <TextField
-                                        fullWidth
-                                        name="jobCategoryName"
-                                        size='small'
-                                        variant="outlined"
-                                    />
-                                </Grid>
-                                <Grid item md={4} xs={12}>
-                                    <InputLabel shrink id="description">
-                                        Description
-                                    </InputLabel>
-                                    <TextField
-                                        fullWidth
-                                        name="description"
-                                        size='small'
-                                        variant="outlined"
-                                    />
-                                </Grid>
-                            </Grid> */}
                             <Box display="flex" justifyContent="flex-end" p={2}>
                                 <Button
                                     color="primary"

@@ -23,8 +23,11 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import { Link as RouterLink, useNavigate, useHref } from 'react-router-dom';
+import { useFormik, Form, FormikProvider } from 'formik';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import * as Yup from 'yup';
+import { ToastContainer, toast } from 'react-toastify';
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -91,27 +94,15 @@ export default function CategoryPage() {
   const navigate = useNavigate();
   const [openFilter, setOpenFilter] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [donationTypeID, setDonationTypeID] = useState(0);
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryCode, setCategoryCode] = useState("");
   const [tableData, setTableData] = useState([]);
-
+  console.log("tableData", tableData)
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem('userId');
     setUserId(userIdFromStorage);
-    tableDataSet();
   }, []);
-
-  useEffect(() => {
-    if (userId != null) {
-      GetDonationTypeID();
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    if (donationTypeID != 0) {
-      DonationRequestDetailsGet();
-    }
-  }, [donationTypeID]);
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -128,43 +119,44 @@ export default function CategoryPage() {
     setPage(0);
   };
 
-  async function GetDonationTypeID() {
-    const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
-    setDonationTypeID(result.data.data.donationTypeID);
-    return;
-  }
+  const formik = useFormik({
+    initialValues: {
+      categoryName: categoryName,
+      categoryCode: categoryCode
+    },
 
-  async function DonationRequestDetailsGet() {
-    const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
-    // setTableData(result.data.data);
+    validationSchema: () => {
+      return Yup.object().shape({
+        // categoryName: Yup.string().required("Please fill the category name"),
+        // categoryCode: Yup.string().required("Please fill the category code"),
+      });
+    },
+
+    onSubmit: (values) => {
+      ItemCategoryDetailsGet(values);
+    }
+  }
+  );
+
+  const { errors, touched, handleSubmit, getFieldProps } = formik;
+
+  async function ItemCategoryDetailsGet(values) {
+    let model = {
+      categoryName: values.categoryName,
+      categoryCode: values.categoryCode
+    }
+    const result = await axios.post('https://localhost:7211/api/Item/GetItemCategoriesforListing', model);
+    setTableData(result.data.data);
     return;
   }
 
   function handleClick() {
     navigate('/dashboard/categoryAdd');
   }
-  function tableDataSet() {
-    const tableData1 = [
-      {
-        donationRequestID: 1,
-        donationTypeName: 'TV',
-        name: '5',
-        contactNumber: '20',
-        bloodTypeName: 'Active',
 
-      },
-      {
-        donationRequestID: 2,
-        donationTypeName: 'Sound Systems',
-        name: '4',
-        contactNumber: '12',
-        bloodTypeName: 'Active',
-
-      },
-      // Add more objects as needed
-    ];
-    setTableData(tableData1)
-
+  function handleClear() {
+    setTableData([])
+    formik.resetForm()
   }
 
   return (
@@ -173,151 +165,139 @@ export default function CategoryPage() {
         <Helmet>
           <title> Category | MIMS </title>
         </Helmet>
+        <FormikProvider value={formik}>
+          <ToastContainer
+            position="bottom-right"
+            pauseOnHover
+          />
+          <Form
+            autoComplete="off"
+            disabled={!(formik.isValid && formik.dirty)}
+            noValidate
+            onSubmit={handleSubmit}
+          >
+            <Container>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" style={{ marginTop: '10px' }}>
+                <Typography variant="h6">
+                  Category
+                </Typography>
+                <Button variant="contained"
+                  onClick={handleClick}
+                ><AddIcon /></Button>
+              </Stack>
+              <br />
+              <Stack spacing={2} style={{ marginBottom: '20px', justifyContent: 'center' }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={7} style={{ marginBottom: '20px' }}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Category Name "
+                    value={formik.values.categoryName}
+                    onChange={formik.handleChange}
+                    {...getFieldProps('categoryName')}
+                    error={Boolean(touched.categoryName && errors.categoryName)}
+                    helperText={touched.categoryName && errors.categoryName}
+                  />
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Category Code "
+                    value={formik.values.categoryCode}
+                    onChange={formik.handleChange}
+                    {...getFieldProps('categoryCode')}
+                    error={Boolean(touched.categoryCode && errors.categoryCode)}
+                    helperText={touched.categoryCode && errors.categoryCode}
+                  />
+                </Stack>
 
-        <Container>
-          {/* <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h6" sx={{ mb: 5 }}>
-            Category
-          </Typography>
-        </Stack>
-        <Stack spacing={2}>
-          <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5}>
-            <Button variant="contained"><b>+</b></Button>
-          </Stack>
-        </Stack> */}
-          <Stack direction="row" alignItems="center" justifyContent="space-between" style={{ marginTop: '10px' }}>
-            <Typography variant="h6">
-              Category
-            </Typography>
-            <Button variant="contained"
-              onClick={handleClick}
-            ><AddIcon /></Button>
-          </Stack>
-          <br />
-          <Stack spacing={2} style={{ marginBottom: '20px', justifyContent: 'center' }}>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={7} style={{ marginBottom: '20px' }}>
-              <TextField
-                id="outlined-basic"
-                label="Category Code"
-                variant="outlined"
-                size='small'
-              />
-              <TextField
-                id="outlined-basic"
-                label="Category Name"
-                variant="outlined"
-                size='small'
-              />
-              {/* <TextField
-                                id="outlined-basic"
-                                label="Dealer Name"
-                                variant="outlined"
-                                size='small'
-                            /> */}
-            </Stack>
-
-          </Stack>
-          <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5}>
-            <Button variant="contained">Search</Button>
-            <Button variant="outlined" style={{ marginLeft: '10px', color: 'red' }}> Clear </Button>
-          </Stack>
-          {tableData.length == 0 ?
-            <SearchNotFound searchQuery="Category" />
-            :
-            <Box
-              display="flex"
-              flexDirection={{ xs: 'column', sm: 'row' }}
-              alignItems="center"
-              justifyContent="center"
-              spacing={1}
-            >
-              <Card style={{ justifycontent: 'center', width: '85rem' }} >
-                <TableContainer >
-                  <Table aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell align="center">Category Code</TableCell>
-                        <TableCell align="center">No. of Sub Categories</TableCell>
-                        <TableCell align="center">No. of Items</TableCell>
-                        {/* {tableData.some((row) => row.bloodTypeName !== " ") && ( */}
-                        <TableCell align="center">Status</TableCell>
-                        {/* )} */}
-                        {/* {tableData.some((row) => row.amount !== 0.00) && (
-                          <TableCell align="center">Amount</TableCell>
-                        )}
-                        <TableCell align="center">Request Before</TableCell> */}
-                        <TableCell align="center">Action</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {(rowsPerPage > 0
-                        ? tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        : tableData
-                      )
-                        .map((row) => {
-                          // const dateParts = row.requestBefore.split('T')[0];
-                          // const formattedDate = new Date(dateParts).toLocaleDateString();
-
-                          return (
-                            <TableRow key={row.donationRequestID}>
-                              <TableCell align="center" component="th" scope="row">
-                                {row.donationTypeName}
-                              </TableCell>
-                              <TableCell align="center">
-                                {row.name}
-                              </TableCell>
-                              <TableCell align="center">
-                                {row.contactNumber}
-                              </TableCell>
-                              {/* {row.bloodTypeName !== "" && ( */}
-                              <TableCell align="center">
-                                {row.bloodTypeName}
-                              </TableCell>
-                              {/* )} */}
-                              {/* {row.amount !== 0.00 && (
-                                <TableCell align="center">
-                                  {row.amount.toFixed(2)}
-                                </TableCell>
-                              )} */}
-                              {/* <TableCell align="center">
-                                {formattedDate}
-                              </TableCell> */}
-                              <TableCell align="center">
-                                <EditIcon />
-                                {/* <IconButton aria-label="delete" size="small" onClick={() => handleClick(row)}>
+              </Stack>
+              <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5}>
+                <Button
+                  type="submit"
+                  size='small'
+                  variant="contained"
+                >
+                  {"Search"}
+                </Button>
+                <Button variant="outlined" style={{ marginLeft: '10px', color: 'red' }} onClick={handleClear}> Clear </Button>
+              </Stack>
+              {tableData.length == 0 ?
+                <SearchNotFound searchQuery="Category" />
+                :
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: 'column', sm: 'row' }}
+                  alignItems="center"
+                  justifyContent="center"
+                  spacing={1}
+                >
+                  <Card style={{ justifycontent: 'center', width: '85rem' }} >
+                    <TableContainer >
+                      <Table aria-label="simple table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell align="center">Category Code</TableCell>
+                            <TableCell align="center">Category Name</TableCell>
+                            <TableCell align="center">Status</TableCell>
+                            <TableCell align="center">Action</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {(rowsPerPage > 0
+                            ? tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : tableData
+                          )
+                            .map((row) => {
+                              console.log("Row", row)
+                              return (
+                                <TableRow key={row.itemCategoryID}>
+                                  <TableCell align="center" component="th" scope="row">
+                                    {row.categoryCode}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {row.categoryName}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    {row.isActive == true ? 'Active' : 'Inactive'}
+                                  </TableCell>
+                                  <TableCell align="center">
+                                    <EditIcon />
+                                    {/* <IconButton aria-label="delete" size="small" onClick={() => handleClick(row)}>
                                 <VolunteerActivismIcon />
                               </IconButton> */}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                    </TableBody>
-                    {/* <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                        colSpan={6}
-                        count={tableData.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                          inputProps: {
-                            'aria-label': 'rows per page',
-                          },
-                          native: true,
-                        }}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter> */}
-                  </Table>
-                </TableContainer>
-              </Card>
-            </Box>
-          }
-        </Container >
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                        </TableBody>
+                        {/* <TableFooter>
+                          <TableRow>
+                            <TablePagination
+                              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                              colSpan={6}
+                              count={tableData.length}
+                              rowsPerPage={rowsPerPage}
+                              page={page}
+                              SelectProps={{
+                                inputProps: {
+                                  'aria-label': 'rows per page',
+                                },
+                                native: true,
+                              }}
+                              onPageChange={handleChangePage}
+                              onRowsPerPageChange={handleChangeRowsPerPage}
+                              ActionsComponent={TablePaginationActions}
+                            />
+                          </TableRow>
+                        </TableFooter> */}
+                      </Table>
+                    </TableContainer>
+                  </Card>
+                </Box>
+              }
+            </Container >
+          </Form>
+        </FormikProvider>
       </Card>
     </Box>
   );
