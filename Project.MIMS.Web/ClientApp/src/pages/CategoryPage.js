@@ -28,6 +28,8 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import * as Yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
+import DeleteIcon from '@mui/icons-material/Delete';
+// import { AESEncryptionParam } from '../helpers/AesEncrypt';
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -97,7 +99,7 @@ export default function CategoryPage() {
   const [categoryName, setCategoryName] = useState("");
   const [categoryCode, setCategoryCode] = useState("");
   const [tableData, setTableData] = useState([]);
-  console.log("tableData", tableData)
+  let encrypted = "";
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem('userId');
@@ -119,6 +121,15 @@ export default function CategoryPage() {
     setPage(0);
   };
 
+  function handleClick() {
+    var itemCategoryID = 0
+    navigate('/dashboard/categoryAdd/' + itemCategoryID);
+  }
+
+  function handleClickEdit(itemCategoryID) {
+    navigate('/dashboard/categoryAdd/' + itemCategoryID)
+  }
+
   const formik = useFormik({
     initialValues: {
       categoryName: categoryName,
@@ -127,8 +138,6 @@ export default function CategoryPage() {
 
     validationSchema: () => {
       return Yup.object().shape({
-        // categoryName: Yup.string().required("Please fill the category name"),
-        // categoryCode: Yup.string().required("Please fill the category code"),
       });
     },
 
@@ -150,9 +159,22 @@ export default function CategoryPage() {
     return;
   }
 
-  function handleClick() {
-    navigate('/dashboard/categoryAdd');
+  async function handleClickDelete(itemCategoryID) {
+    const result = await axios.get('https://localhost:7211/api/Item/DeleteItemCategory', { params: { itemCategoryID: parseInt(itemCategoryID) } });
+    if (result.data.statusCode === "Error") {
+      toast.error(result.data.message);
+      return;
+    }
+    else {
+      toast.success(result.data.message);
+      let model = {
+        categoryName: formik.values.categoryName,
+        categoryCode: formik.values.categoryCode
+      }
+      ItemCategoryDetailsGet(model)
+    }
   }
+
 
   function handleClear() {
     setTableData([])
@@ -236,10 +258,10 @@ export default function CategoryPage() {
                       <Table aria-label="simple table">
                         <TableHead>
                           <TableRow>
-                            <TableCell align="center">Category Code</TableCell>
-                            <TableCell align="center">Category Name</TableCell>
-                            <TableCell align="center">Status</TableCell>
-                            <TableCell align="center">Action</TableCell>
+                            <TableCell align="center"><strong>Category Code</strong></TableCell>
+                            <TableCell align="center"><strong>Category Name</strong></TableCell>
+                            <TableCell align="center"><strong>Status</strong></TableCell>
+                            <TableCell align="center"><strong>Action</strong></TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -248,7 +270,6 @@ export default function CategoryPage() {
                             : tableData
                           )
                             .map((row) => {
-                              console.log("Row", row)
                               return (
                                 <TableRow key={row.itemCategoryID}>
                                   <TableCell align="center" component="th" scope="row">
@@ -261,10 +282,12 @@ export default function CategoryPage() {
                                     {row.isActive == true ? 'Active' : 'Inactive'}
                                   </TableCell>
                                   <TableCell align="center">
-                                    <EditIcon />
-                                    {/* <IconButton aria-label="delete" size="small" onClick={() => handleClick(row)}>
-                                <VolunteerActivismIcon />
-                              </IconButton> */}
+                                    <IconButton aria-label="delete" size="small" onClick={() => handleClickEdit(row.itemCategoryID)}>
+                                      <EditIcon />
+                                    </IconButton>
+                                    <IconButton aria-label="delete" size="small" onClick={() => handleClickDelete(row.itemCategoryID)}>
+                                      <DeleteIcon style={{ color: 'red' }} />
+                                    </IconButton>
                                   </TableCell>
                                 </TableRow>
                               );

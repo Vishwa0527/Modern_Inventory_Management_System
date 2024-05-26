@@ -32,5 +32,26 @@ namespace Project.MIMS.API.Controllers
         {
             return await itemService.GetItemCategoriesforListing(model);
         }
+
+        [HttpPost]
+        [Route("ItemCategoryUpdate")]
+        public async Task<MIMSResponse> ItemCategoryUpdate(ItemCategoryModel model)
+        {
+            return await itemService.ItemCategoryUpdate(model);
+        }
+
+        [HttpGet]
+        [Route("GetItemCategoryDetailsByID")]
+        public async Task<MIMSResponse> GetItemCategoryDetailsByID(int ItemCategoryID)
+        {
+            return await itemService.GetItemCategoryDetailsByID(ItemCategoryID);
+        }
+
+        [HttpGet]
+        [Route("DeleteItemCategory")]
+        public async Task<MIMSResponse> DeleteItemCategory(int ItemCategoryID)
+        {
+            return await itemService.DeleteItemCategory(ItemCategoryID);
+        }
     }
 }
