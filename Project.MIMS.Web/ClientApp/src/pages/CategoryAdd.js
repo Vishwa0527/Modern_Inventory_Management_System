@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useEffect, useState } from 'react';
 // @mui
-import { Stack, Typography, Card, TextField, Button } from '@mui/material';
+import { Stack, Typography, Card, TextField, Button, Switch, FormControlLabel } from '@mui/material';
 import { IconButton, Box } from '@material-ui/core';
 import axios from 'axios';
 import Divider from '@mui/material/Divider';
@@ -15,7 +15,7 @@ import { useFormik, Form, FormikProvider } from 'formik';
 import * as Yup from 'yup';
 import CardContent from '@material-ui/core/CardContent';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 // ----------------------------------------------------------------------
@@ -82,36 +82,31 @@ TablePaginationActions.propTypes = {
 
 export default function CategoryAddPage() {
     const navigate = useNavigate();
+    const { itemCategoryID } = useParams();
     const [userId, setUserId] = useState(null);
-    const [donationTypeID, setDonationTypeID] = useState(0);
-    const [tableData, setTableData] = useState([]);
+    const [isUpdate, setIsUpdate] = useState(false);
     const [formData, setFormData] = useState({
         categoryCode: '',
-        categoryName: ''
+        categoryName: '',
+        isActive: false
 
     });
-
     useEffect(() => {
         const userIdFromStorage = localStorage.getItem('userId');
         setUserId(userIdFromStorage);
+        if (itemCategoryID > 0) {
+            setIsUpdate(true)
+            GetItemCategoryDetailsByID(itemCategoryID);
+        } else {
+            setIsUpdate(false)
+        }
     }, []);
-
-    useEffect(() => {
-        if (userId != null) {
-            GetDonationTypeID();
-        }
-    }, [userId]);
-
-    useEffect(() => {
-        if (donationTypeID != 0) {
-            DonationRequestDetailsGet();
-        }
-    }, [donationTypeID]);
 
     const formik = useFormik({
         initialValues: {
             categoryName: formData.categoryName,
-            categoryCode: formData.categoryCode
+            categoryCode: formData.categoryCode,
+            isActive: formData.isActive
         },
 
         validationSchema: () => {
@@ -128,36 +123,57 @@ export default function CategoryAddPage() {
     );
 
     async function SubmitForm(values) {
-        let model = {
-            categoryName: values.categoryName,
-            categoryCode: values.categoryCode,
-            createdBy: userId == null ? 0 : parseInt(userId)
-        }
-        const result = await axios.post('https://localhost:7211/api/Item/ItemCategorySave', model);
-        if (result.data.statusCode === "Error") {
-            toast.error(result.data.message);
-            return;
-        }
-        else {
-            toast.success(result.data.message, {
-                autoClose: 500,
-                onClose: () => navigate('/dashboard/category', { replace: true })
-            });
+        if (isUpdate) {
+            let model = {
+                categoryName: values.categoryName,
+                categoryCode: values.categoryCode,
+                createdBy: userId == null ? 0 : parseInt(userId),
+                itemCategoryID: parseInt(itemCategoryID),
+                isActive: values.isActive
+            }
+
+            const result = await axios.post('https://localhost:7211/api/Item/ItemCategoryUpdate', model);
+            if (result.data.statusCode === "Error") {
+                toast.error(result.data.message);
+                return;
+            }
+            else {
+                toast.success(result.data.message, {
+                    autoClose: 500,
+                    onClose: () => navigate('/dashboard/category', { replace: true })
+                });
+            }
+        } else {
+            let model = {
+                categoryName: values.categoryName,
+                categoryCode: values.categoryCode,
+                createdBy: userId == null ? 0 : parseInt(userId)
+            }
+            const result = await axios.post('https://localhost:7211/api/Item/ItemCategorySave', model);
+            if (result.data.statusCode === "Error") {
+                toast.error(result.data.message);
+                return;
+            }
+            else {
+                toast.success(result.data.message, {
+                    autoClose: 500,
+                    onClose: () => navigate('/dashboard/category', { replace: true })
+                });
+            }
         }
     }
 
-    const { errors, touched, handleSubmit, getFieldProps } = formik;
+    const { setValues, handleSubmit, getFieldProps, values } = formik;
 
-    async function GetDonationTypeID() {
-        const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
-        setDonationTypeID(result.data.data.donationTypeID);
-        return;
-    }
+    async function GetItemCategoryDetailsByID(itemCategoryID) {
+        const result = await axios.get('https://localhost:7211/api/Item/GetItemCategoryDetailsByID', { params: { itemCategoryID: parseInt(itemCategoryID) } });
+        setValues({
+            ...values,
+            categoryCode: result.data.data.categoryCode,
+            categoryName: result.data.data.categoryName,
+            isActive: result.data.data.isActive
 
-    async function DonationRequestDetailsGet() {
-        const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
-        setTableData(result.data.data);
-        return;
+        })
     }
 
     function handleClick() {
@@ -168,7 +184,7 @@ export default function CategoryAddPage() {
         <Box mt={0}>
             <Card>
                 <Helmet>
-                    <title> Category Add | MIMS </title>
+                    <title>{isUpdate ? "Update Category | MIMS" : "Add Category | MIMS"}</title>
                 </Helmet>
                 <Divider />
                 <CardContent>
@@ -185,7 +201,7 @@ export default function CategoryAddPage() {
                         >
                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Typography variant="h6">
-                                    Add Category
+                                    {isUpdate ? "Update Category" : "Add Category"}
                                 </Typography>
                                 <Button variant="contained"
                                     onClick={handleClick}><ArrowBackIcon /></Button>
@@ -198,20 +214,39 @@ export default function CategoryAddPage() {
                                     label="Category Name *"
                                     value={formik.values.categoryName}
                                     onChange={formik.handleChange}
-                                    {...getFieldProps('categoryName')}
-                                    error={Boolean(touched.categoryName && errors.categoryName)}
-                                    helperText={touched.categoryName && errors.categoryName}
+                                    {...formik.getFieldProps('categoryName')}
+                                    error={Boolean(formik.touched.categoryName && formik.errors.categoryName)}
+                                    helperText={formik.touched.categoryName && formik.errors.categoryName}
+                                    sx={{ flex: 1 }}
                                 />
                                 <TextField
                                     fullWidth
                                     size="small"
                                     label="Category Code *"
                                     value={formik.values.categoryCode}
+                                    disabled={isUpdate}
                                     onChange={formik.handleChange}
-                                    {...getFieldProps('categoryCode')}
-                                    error={Boolean(touched.categoryCode && errors.categoryCode)}
-                                    helperText={touched.categoryCode && errors.categoryCode}
+                                    {...formik.getFieldProps('categoryCode')}
+                                    error={Boolean(formik.touched.categoryCode && formik.errors.categoryCode)}
+                                    helperText={formik.touched.categoryCode && formik.errors.categoryCode}
+                                    sx={{ flex: 1 }}
                                 />
+                                {isUpdate ?
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                value={formik.values.isActive}
+                                                checked={formik.values.isActive}
+                                                {...formik.getFieldProps('isActive')}
+                                                onChange={formik.handleChange}
+                                                color="error"
+                                                name="isActive"
+                                                inputProps={{ 'aria-label': 'primary checkbox' }}
+                                            />
+                                        }
+                                        label="Is Active"
+                                        sx={{ flex: 1 }}
+                                    /> : null}
                             </Stack>
                             <Box display="flex" justifyContent="flex-end" p={2}>
                                 <Button
@@ -220,7 +255,7 @@ export default function CategoryAddPage() {
                                     size='small'
                                     variant="contained"
                                 >
-                                    {"Save"}
+                                    {isUpdate ? "Update" : "Save"}
                                 </Button>
                             </Box>
                         </Form>

@@ -33,7 +33,7 @@ export default function Router() {
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'category', element: <CategoryPage /> },
-        { path: 'categoryAdd', element: <CategoryAddPage /> },
+        { path: 'categoryAdd/:itemCategoryID', element: <CategoryAddPage /> },
         { path: 'SubCategoryAdd', element: <SubCategoryAddPage /> },
         { path: 'SubCategory', element: <SubCategoryPage /> },
         { path: 'Dealer', element: <DealerPage /> },
