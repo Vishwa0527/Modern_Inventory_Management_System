@@ -139,7 +139,8 @@ export default function SubCategoryPage() {
     }
 
     function handleClick() {
-        navigate('/dashboard/SubCategoryAdd');
+        var subCategoryID = 0
+        navigate('/dashboard/SubCategoryAdd/' + subCategoryID);
     }
 
     return (

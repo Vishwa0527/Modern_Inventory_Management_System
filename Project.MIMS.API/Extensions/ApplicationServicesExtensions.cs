@@ -19,6 +19,7 @@ namespace Project.MIMS.API.Extensions
             services.AddTransient<IMobileService, MobileService>();
             services.AddTransient<IDonationRequestService, DonationRequestService>();
             services.AddTransient<IItemService, ItemService>();
+            services.AddTransient<IDealerService, DealerService>();
 
             return services;
         }

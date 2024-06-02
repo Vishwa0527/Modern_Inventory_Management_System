@@ -1,33 +1,23 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useEffect, useState } from 'react';
 // @mui
-import { Container, Stack, Typography, Card, MenuItem, TextField, Button } from '@mui/material';
+import { Stack, Typography, Card, TextField, Button, Switch, FormControlLabel } from '@mui/material';
 import { IconButton, Box } from '@material-ui/core';
 import axios from 'axios';
 import Divider from '@mui/material/Divider';
-import SearchNotFound from '../SearchNotFound';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import PropTypes, { func } from 'prop-types'
 import { useTheme } from '@mui/material/styles'
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
-import PerfectScrollbar from 'perfect-scrollbar';
+import { useFormik, Form, FormikProvider } from 'formik';
+import * as Yup from 'yup';
 import CardContent from '@material-ui/core/CardContent';
-import Grid from '@material-ui/core/Grid';
-import InputLabel from '@material-ui/core/InputLabel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link as RouterLink, useNavigate, useHref } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import MenuItem from '@material-ui/core/MenuItem';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
@@ -93,134 +83,277 @@ TablePaginationActions.propTypes = {
 
 export default function SubCategoryAddPage() {
     const navigate = useNavigate();
-    const [openFilter, setOpenFilter] = useState(false);
+    const { itemCategoryID } = useParams();
     const [userId, setUserId] = useState(null);
-    const [donationTypeID, setDonationTypeID] = useState(0);
-    const [tableData, setTableData] = useState([]);
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [itemCategoryList, setItemCategoryList] = useState([]);
+    const [dealerList, setDealerList] = useState([]);
+    const [formData, setFormData] = useState({
+        subCategoryCode: '',
+        subCategoryName: '',
+        isActive: false,
+        categoryID: '0',
+        description: '',
+        dealerID: '0'
 
+    });
     useEffect(() => {
         const userIdFromStorage = localStorage.getItem('userId');
         setUserId(userIdFromStorage);
+        GetItemCategoryListForDropdown();
+        GetDealerListForDropdown();
+        if (itemCategoryID > 0) {
+            setIsUpdate(true)
+            GetItemCategoryDetailsByID(itemCategoryID);
+        } else {
+            setIsUpdate(false)
+        }
     }, []);
 
-    useEffect(() => {
-        if (userId != null) {
-            GetDonationTypeID();
+    const formik = useFormik({
+        initialValues: {
+            subCategoryName: formData.subCategoryName,
+            subCategoryCode: formData.subCategoryCode,
+            isActive: formData.isActive,
+            categoryID: formData.categoryID,
+            description: formData.description,
+            dealerID: formData.dealerID
+        },
+
+        validationSchema: () => {
+            return Yup.object().shape({
+                subCategoryName: Yup.string().required("Please fill the Sub Category Name"),
+                subCategoryCode: Yup.string().required("Please fill the Sub Category Code"),
+                categoryID: Yup.number().min(1, 'Please Select Category').required('Category Required'),
+                dealerID: Yup.number().min(1, 'Please Select Dealer').required('Dealer Required'),
+            });
+        },
+
+        onSubmit: (values) => {
+            SubmitForm(values);
         }
-    }, [userId]);
+    }
+    );
 
-    useEffect(() => {
-        if (donationTypeID != 0) {
-            DonationRequestDetailsGet();
+    async function SubmitForm(values) {
+        if (isUpdate) {
+            let model = {
+                categoryName: values.categoryName,
+                categoryCode: values.categoryCode,
+                createdBy: userId == null ? 0 : parseInt(userId),
+                itemCategoryID: parseInt(itemCategoryID),
+                isActive: values.isActive
+            }
+
+            const result = await axios.post('https://localhost:7211/api/Item/ItemCategoryUpdate', model);
+            if (result.data.statusCode === "Error") {
+                toast.error(result.data.message);
+                return;
+            }
+            else {
+                toast.success(result.data.message, {
+                    autoClose: 500,
+                    onClose: () => navigate('/dashboard/SubCategory', { replace: true })
+                });
+            }
+        } else {
+            let model = {
+                subCategoryName: values.subCategoryName,
+                subCategoryCode: values.subCategoryCode,
+                isActive: values.isActive,
+                categoryID: values.categoryID,
+                description: values.description,
+                dealerID: values.dealerID,
+                createdBy: userId == null ? 0 : parseInt(userId)
+            }
+
+            const result = await axios.post('https://localhost:7211/api/Item/ItemSubCategorySave', model);
+            if (result.data.statusCode === "Error") {
+                toast.error(result.data.message);
+                return;
+            }
+            else {
+                toast.success(result.data.message, {
+                    autoClose: 500,
+                    onClose: () => navigate('/dashboard/SubCategory', { replace: true })
+                });
+            }
         }
-    }, [donationTypeID]);
-
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-    async function GetDonationTypeID() {
-        const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
-        setDonationTypeID(result.data.data.donationTypeID);
-        return;
     }
 
-    async function DonationRequestDetailsGet() {
-        const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
-        setTableData(result.data.data);
-        return;
+    const { setValues, handleSubmit, getFieldProps, values } = formik;
+
+    async function GetItemCategoryDetailsByID(itemCategoryID) {
+        const result = await axios.get('https://localhost:7211/api/Item/GetItemCategoryDetailsByID', { params: { itemCategoryID: parseInt(itemCategoryID) } });
+        setValues({
+            ...values,
+            categoryCode: result.data.data.categoryCode,
+            categoryName: result.data.data.categoryName,
+            isActive: result.data.data.isActive
+
+        })
+    }
+
+    async function GetItemCategoryListForDropdown() {
+        const result = await axios.get('https://localhost:7211/api/Item/GetItemCategoryListForDropdown');
+        setItemCategoryList(result.data.data)
+    }
+
+    async function GetDealerListForDropdown() {
+        const result = await axios.get('https://localhost:7211/api/Dealer/GetDealerListForDropdown');
+        setDealerList(result.data.data)
+    }
+
+    function generateDropDownMenu(data) {
+        let items = []
+        if (data != null) {
+            data.forEach(x => {
+                items.push(x.isActive == true ? <MenuItem key={x.itemCategoryID} value={x.itemCategoryID}>{x.categoryName}</MenuItem> : null)
+            });
+        }
+        return items
+    }
+
+    function generateDropDownMenuDealer(data) {
+        let items = []
+        if (data != null) {
+            data.forEach(x => {
+                items.push(x.isActive == true ? <MenuItem key={x.dealerID} value={x.dealerID}>{x.dealerName}</MenuItem> : null)
+            });
+        }
+        return items
     }
 
     function handleClick() {
-        navigate('/dashboard/SubCategory');
+        navigate('/dashboard/category');
     }
 
     return (
         <Box mt={0}>
             <Card>
                 <Helmet>
-                    <title> Sub Category Add | MIMS </title>
+                    <title>{isUpdate ? "Update Category | MIMS" : "Add Category | MIMS"}</title>
                 </Helmet>
                 <Divider />
                 <CardContent>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between">
-                        <Typography variant="h6">
-                            Add Sub Category
-                        </Typography>
-                        <Button variant="contained"
-                            onClick={handleClick}><ArrowBackIcon /></Button>
-                    </Stack>
-                    <br />
-                    <Grid container spacing={3}>
-                        <Grid item md={4} xs={12}>
-                            <InputLabel shrink id="jobCategoryCode">
-                                Sub Category Code *
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="jobCategoryCode"
-                                size='small'
-                                variant="outlined"
-                            />
-                        </Grid>
-                        <Grid item md={4} xs={12}>
-                            <InputLabel shrink id="jobCategoryCode">
-                                Category Code *
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="jobCategoryCode"
-                                size='small'
-                                variant="outlined"
-                            />
-                        </Grid>
-                        <Grid item md={4} xs={12}>
-                            <InputLabel shrink id="jobCategoryName">
-                                Dealer Name *
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="jobCategoryName"
-                                size='small'
-                                variant="outlined"
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={3}>
-                        <Grid item md={4} xs={12}>
-                            <InputLabel shrink id="description">
-                                Description
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="description"
-                                size='small'
-                                variant="outlined"
-                            />
-                        </Grid>
-                    </Grid>
+                    <FormikProvider value={formik}>
+                        <ToastContainer
+                            position="bottom-right"
+                            pauseOnHover
+                        />
+                        <Form
+                            autoComplete="off"
+                            disabled={!(formik.isValid && formik.dirty)}
+                            noValidate
+                            onSubmit={handleSubmit}
+                        >
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Typography variant="h6">
+                                    {isUpdate ? "Update Sub Category" : "Add Sub Category"}
+                                </Typography>
+                                <Button variant="contained"
+                                    onClick={handleClick}><ArrowBackIcon /></Button>
+                            </Stack>
+                            <br />
+                            <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    label="Category *"
+                                    value={formik.values.categoryID}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('categoryID')}
+                                    error={Boolean(formik.touched.categoryID && formik.errors.categoryID)}
+                                    helperText={formik.touched.categoryID && formik.errors.categoryID}
+                                    sx={{ flex: 1 }}
+                                >
+                                    <MenuItem key={0} value={0}> Select Item Category</MenuItem>
+                                    {generateDropDownMenu(itemCategoryList)}
+                                </TextField>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    label="Dealer *"
+                                    value={formik.values.dealerID}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('dealerID')}
+                                    error={Boolean(formik.touched.dealerID && formik.errors.dealerID)}
+                                    helperText={formik.touched.dealerID && formik.errors.dealerID}
+                                    sx={{ flex: 1 }}
+                                >
+                                    <MenuItem key={0} value={0}> Select Dealer</MenuItem>
+                                    {generateDropDownMenuDealer(dealerList)}
+                                </TextField>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label="Sub Category Name *"
+                                    value={formik.values.subCategoryName}
+                                    disabled={isUpdate}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('subCategoryName')}
+                                    error={Boolean(formik.touched.subCategoryName && formik.errors.subCategoryName)}
+                                    helperText={formik.touched.subCategoryName && formik.errors.subCategoryName}
+                                    sx={{ flex: 1 }}
+                                />
+
+                            </Stack>
+                            <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label="Sub Category Code *"
+                                    value={formik.values.subCategoryCode}
+                                    disabled={isUpdate}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('subCategoryCode')}
+                                    error={Boolean(formik.touched.subCategoryCode && formik.errors.subCategoryCode)}
+                                    helperText={formik.touched.subCategoryCode && formik.errors.subCategoryCode}
+                                    sx={{ flex: 1 }}
+                                />
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label="Description"
+                                    value={formik.values.description}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('description')}
+                                    error={Boolean(formik.touched.description && formik.errors.description)}
+                                    helperText={formik.touched.description && formik.errors.description}
+                                    sx={{ flex: 1 }}
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            value={formik.values.isActive}
+                                            checked={formik.values.isActive}
+                                            {...formik.getFieldProps('isActive')}
+                                            onChange={formik.handleChange}
+                                            color="error"
+                                            name="isActive"
+                                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                                        />
+                                    }
+                                    label="Is Active"
+                                    sx={{ flex: 1 }}
+                                />
+
+                            </Stack>
+                            <Box display="flex" justifyContent="flex-end" p={2}>
+                                <Button
+                                    color="primary"
+                                    type="submit"
+                                    size='small'
+                                    variant="contained"
+                                >
+                                    {isUpdate ? "Update" : "Save"}
+                                </Button>
+                            </Box>
+                        </Form>
+                    </FormikProvider>
                 </CardContent>
-                <Box display="flex" justifyContent="flex-end" p={2}>
-                    <Button
-                        color="primary"
-                        type="submit"
-                        size='small'
-                        variant="contained"
-                    >
-                        {"Save"}
-                    </Button>
-                </Box>
             </Card>
         </Box>
     );
