@@ -14,5 +14,7 @@ namespace Project.MIMS.Core.Services.ItemManagement
         Task<MIMSResponse> ItemCategoryUpdate(ItemCategoryModel model);
         Task<MIMSResponse> GetItemCategoryDetailsByID(int ItemCategoryID);
         Task<MIMSResponse> DeleteItemCategory(int ItemCategoryID);
+        Task<MIMSResponse> GetItemCategoryListForDropdown();
+        Task<MIMSResponse> ItemSubCategorySave(ItemSubCategoryModel model);
     }
 }

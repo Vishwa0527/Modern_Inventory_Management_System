@@ -175,5 +175,64 @@ namespace Project.MIMS.Services.ItemManagement
                 throw ex;
             }
         }
+
+        public async Task<MIMSResponse> GetItemCategoryListForDropdown()
+        {
+            try
+            {
+                var result = await UnitOfWork.Repository<ItemCategoryModel>().GetEntitiesBySPAsyncWithoutParameters("[Item].[GetItemCategoryListForDropdown]");
+                if (result != null)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Category Details Retrieved Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "No Records to Display", result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<MIMSResponse> ItemSubCategorySave(ItemSubCategoryModel model)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "SubCategoryID", Tuple.Create(0.ToString(), DbType.Int32, ParameterDirection.InputOutput) },
+                    { "SubCategoryCode", Tuple.Create(model.SubCategoryCode.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "SubCategoryName", Tuple.Create(model.SubCategoryName.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "CategoryID", Tuple.Create(model.CategoryID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "DealerID", Tuple.Create(model.DealerID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "Description", Tuple.Create(model.Description.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "IsActive", Tuple.Create(model.IsActive.ToString(), DbType.Boolean, ParameterDirection.Input) },
+                    { "CreatedBy", Tuple.Create(model.CreatedBy.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<ItemSubCategoryModel>().ExecuteSPWithInputOutputAsync("[Item].[ItemSubCategorySave]", parameters);
+                if (result == -1)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "Item Sub Category Already Exists", result);
+                }
+                else if (result > 0)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Sub Category Saved Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "Item Sub Category Save Failed", result);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }
