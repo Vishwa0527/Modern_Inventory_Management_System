@@ -234,5 +234,61 @@ namespace Project.MIMS.Services.ItemManagement
                 throw ex;
             }
         }
+
+        public async Task<MIMSResponse> GetItemSubCategoriesforListing(ItemSubCategoryModel model)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "SubCategoryCode", Tuple.Create(model.SubCategoryCode == "" ? null : model.SubCategoryCode.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "DealerID", Tuple.Create(model.DealerID == 0 ? null : model.DealerID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "CategoryID", Tuple.Create(model.CategoryID == 0 ? null : model.CategoryID.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<ItemSubCategoryListingModel>().GetEntitiesBySPAsync("[Item].[GetItemSubCategoriesforListing]", parameters);
+                if (result.Count() > 0)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Sub Category Details Retrieved Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "No Records to Display", result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<MIMSResponse> DeleteItemSubCategory(int SubCategoryID, int UserID)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "SubCategoryID", Tuple.Create(SubCategoryID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "UserID", Tuple.Create(UserID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "Result", Tuple.Create("-1".ToString(), DbType.Int32, ParameterDirection.Output) }
+                };
+
+                var result = await UnitOfWork.Repository<ItemSubCategoryModel>().ExecuteSPWithInputOutputAsync("[Item].[DeleteItemSubCategory]", parameters);
+                if (result > 0)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Sub Category Deleted Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "Error While Deleting Item Sub Category", result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }
