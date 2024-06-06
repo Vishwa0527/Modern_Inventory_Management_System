@@ -67,5 +67,19 @@ namespace Project.MIMS.API.Controllers
         {
             return await itemService.ItemSubCategorySave(model);
         }
+
+        [HttpPost]
+        [Route("GetItemSubCategoriesforListing")]
+        public async Task<MIMSResponse> GetItemSubCategoriesforListing(ItemSubCategoryModel model)
+        {
+            return await itemService.GetItemSubCategoriesforListing(model);
+        }
+
+        [HttpGet]
+        [Route("DeleteItemSubCategory")]
+        public async Task<MIMSResponse> DeleteItemSubCategory(int SubCategoryID, int UserID)
+        {
+            return await itemService.DeleteItemSubCategory(SubCategoryID, UserID);
+        }
     }
 }

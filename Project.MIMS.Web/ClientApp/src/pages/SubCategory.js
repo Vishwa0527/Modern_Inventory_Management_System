@@ -23,93 +23,32 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import { Link as RouterLink, useNavigate, useHref } from 'react-router-dom';
+import { useFormik, Form, FormikProvider } from 'formik';
 import AddIcon from '@mui/icons-material/Add';
-
-// ----------------------------------------------------------------------
-function TablePaginationActions(props) {
-    const theme = useTheme();
-    const { count, page, rowsPerPage, onPageChange } = props;
-
-    const handleFirstPageButtonClick = (event) => {
-        onPageChange(event, 0);
-    };
-
-    const handleBackButtonClick = (event) => {
-        onPageChange(event, page - 1);
-    };
-
-    const handleNextButtonClick = (event) => {
-        onPageChange(event, page + 1);
-    };
-
-    const handleLastPageButtonClick = (event) => {
-        onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-    };
-
-    return (
-        <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-            <IconButton
-                onClick={handleFirstPageButtonClick}
-                disabled={page === 0}
-                aria-label="first page"
-            >
-                {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-            </IconButton>
-            <IconButton
-                onClick={handleBackButtonClick}
-                disabled={page === 0}
-                aria-label="previous page"
-            >
-                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-            </IconButton>
-            <IconButton
-                onClick={handleNextButtonClick}
-                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                aria-label="next page"
-            >
-                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-            </IconButton>
-            <IconButton
-                onClick={handleLastPageButtonClick}
-                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-                aria-label="last page"
-            >
-                {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-            </IconButton>
-        </Box>
-    );
-}
-
-TablePaginationActions.propTypes = {
-    count: PropTypes.number.isRequired,
-    onPageChange: PropTypes.func.isRequired,
-    page: PropTypes.number.isRequired,
-    rowsPerPage: PropTypes.number.isRequired,
-};
+import EditIcon from '@mui/icons-material/Edit';
+import * as Yup from 'yup';
+import { ToastContainer, toast } from 'react-toastify';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function SubCategoryPage() {
     const navigate = useNavigate();
     const [openFilter, setOpenFilter] = useState(false);
     const [userId, setUserId] = useState(null);
-    const [donationTypeID, setDonationTypeID] = useState(0);
+    const [categoryCode, setCategoryCode] = useState("");
+    const [dealerID, setDealerID] = useState(0);
+    const [categoryID, setCategoryID] = useState(0);
+    const [itemCategoryList, setItemCategoryList] = useState([]);
+    const [dealerList, setDealerList] = useState([]);
     const [tableData, setTableData] = useState([]);
+    console.log("tableData", tableData)
+    let encrypted = "";
 
     useEffect(() => {
         const userIdFromStorage = localStorage.getItem('userId');
         setUserId(userIdFromStorage);
+        GetItemCategoryListForDropdown();
+        GetDealerListForDropdown();
     }, []);
-
-    useEffect(() => {
-        if (userId != null) {
-            GetDonationTypeID();
-        }
-    }, [userId]);
-
-    useEffect(() => {
-        if (donationTypeID != 0) {
-            DonationRequestDetailsGet();
-        }
-    }, [donationTypeID]);
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -126,21 +65,97 @@ export default function SubCategoryPage() {
         setPage(0);
     };
 
-    async function GetDonationTypeID() {
-        const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
-        setDonationTypeID(result.data.data.donationTypeID);
-        return;
+    function handleClick() {
+        var subCategoryID = 0
+        navigate('/dashboard/SubCategoryAdd/' + subCategoryID);
     }
 
-    async function DonationRequestDetailsGet() {
-        const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
+    function handleClickEdit(subCategoryID) {
+        navigate('/dashboard/SubCategoryAdd/' + subCategoryID)
+    }
+
+    const formik = useFormik({
+        initialValues: {
+            categoryCode: categoryCode,
+            dealerID: dealerID,
+            categoryID: categoryID
+        },
+
+        validationSchema: () => {
+            return Yup.object().shape({
+            });
+        },
+
+        onSubmit: (values) => {
+            ItemSubCategoryDetailsGet(values);
+        }
+    }
+    );
+
+    const { errors, touched, handleSubmit, getFieldProps, values } = formik;
+
+    async function ItemSubCategoryDetailsGet(values) {
+        let model = {
+            subCategoryCode: values.categoryCode,
+            dealerID: values.dealerID,
+            categoryID: values.categoryID
+        }
+        const result = await axios.post('https://localhost:7211/api/Item/GetItemSubCategoriesforListing', model);
         setTableData(result.data.data);
         return;
     }
 
-    function handleClick() {
-        var subCategoryID = 0
-        navigate('/dashboard/SubCategoryAdd/' + subCategoryID);
+    async function handleClickDelete(subCategoryID) {
+        const result = await axios.get('https://localhost:7211/api/Item/DeleteItemSubCategory', { params: { subCategoryID: parseInt(subCategoryID), userID: parseInt(userId) } });
+        if (result.data.statusCode === "Error") {
+            toast.error(result.data.message);
+            return;
+        }
+        else {
+            toast.success(result.data.message);
+            let model = {
+                categoryCode: formik.values.categoryCode,
+                dealerID: formik.values.dealerID,
+                categoryID: formik.values.categoryID
+            }
+            ItemSubCategoryDetailsGet(model)
+        }
+    }
+
+    async function GetItemCategoryListForDropdown() {
+        const result = await axios.get('https://localhost:7211/api/Item/GetItemCategoryListForDropdown');
+        setItemCategoryList(result.data.data)
+    }
+
+    async function GetDealerListForDropdown() {
+        const result = await axios.get('https://localhost:7211/api/Dealer/GetDealerListForDropdown');
+        setDealerList(result.data.data)
+    }
+
+    function generateDropDownMenu(data) {
+        let items = []
+        if (data != null) {
+            data.forEach(x => {
+                items.push(x.isActive == true ? <MenuItem key={x.itemCategoryID} value={x.itemCategoryID}>{x.categoryName}</MenuItem> : null)
+            });
+        }
+        return items
+    }
+
+    function generateDropDownMenuDealer(data) {
+        let items = []
+        if (data != null) {
+            data.forEach(x => {
+                items.push(x.isActive == true ? <MenuItem key={x.dealerID} value={x.dealerID}>{x.dealerName}</MenuItem> : null)
+            });
+        }
+        return items
+    }
+
+
+    function handleClear() {
+        setTableData([])
+        formik.resetForm()
     }
 
     return (
@@ -149,161 +164,147 @@ export default function SubCategoryPage() {
                 <Helmet>
                     <title> Sub Category | MIMS </title>
                 </Helmet>
+                <FormikProvider value={formik}>
+                    <ToastContainer
+                        position="bottom-right"
+                        pauseOnHover
+                    />
+                    <Form
+                        autoComplete="off"
+                        disabled={!(formik.isValid && formik.dirty)}
+                        noValidate
+                        onSubmit={handleSubmit}
+                    >
+                        <Container>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between" style={{ marginTop: '10px' }}>
+                                <Typography variant="h6">
+                                    Sub Category
+                                </Typography>
+                                <Button variant="contained"
+                                    onClick={handleClick}
+                                ><AddIcon /></Button>
+                            </Stack>
+                            <br />
+                            <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    label="Category "
+                                    value={formik.values.categoryID}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('categoryID')}
+                                    error={Boolean(formik.touched.categoryID && formik.errors.categoryID)}
+                                    helperText={formik.touched.categoryID && formik.errors.categoryID}
+                                    sx={{ flex: 1 }}
+                                >
+                                    <MenuItem key={0} value={0}> Select Item Category</MenuItem>
+                                    {generateDropDownMenu(itemCategoryList)}
+                                </TextField>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    label="Dealer "
+                                    value={formik.values.dealerID}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('dealerID')}
+                                    error={Boolean(formik.touched.dealerID && formik.errors.dealerID)}
+                                    helperText={formik.touched.dealerID && formik.errors.dealerID}
+                                    sx={{ flex: 1 }}
+                                >
+                                    <MenuItem key={0} value={0}> Select Dealer</MenuItem>
+                                    {generateDropDownMenuDealer(dealerList)}
+                                </TextField>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label="Sub Category Code "
+                                    value={formik.values.categoryCode}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('categoryCode')}
+                                    error={Boolean(formik.touched.categoryCode && formik.errors.categoryCode)}
+                                    helperText={formik.touched.categoryCode && formik.errors.categoryCode}
+                                    sx={{ flex: 1 }}
+                                />
 
-                <Container>
-                    {/* <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h6" sx={{ mb: 5 }}>
-            Category
-          </Typography>
-        </Stack>
-        <Stack spacing={2}>
-          <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5}>
-            <Button variant="contained"><b>+</b></Button>
-          </Stack>
-        </Stack> */}
-                    <Stack direction="row" alignItems="center" justifyContent="space-between" style={{ marginTop: '10px' }}>
-                        <Typography variant="h6">
-                            Sub Category
-                        </Typography>
-                        <Button variant="contained"
-                            onClick={handleClick}
-                        ><AddIcon /></Button>
-                    </Stack>
-                    <br />
-                    <Stack spacing={2} style={{ marginBottom: '20px', justifyContent: 'center' }}>
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={7} style={{ marginBottom: '20px' }}>
-                            <TextField
-                                id="outlined-basic"
-                                label="Category Code"
-                                variant="outlined"
-                                size='small'
-                            />
-                            <TextField
-                                id="outlined-basic"
-                                label="Category Name"
-                                variant="outlined"
-                                size='small'
-                            />
-                            <TextField
-                                id="outlined-basic"
-                                label="Sub Category Code"
-                                variant="outlined"
-                                size='small'
-                            />
-                        </Stack>
-
-                    </Stack>
-                    <Stack spacing={2} style={{ marginBottom: '20px', justifyContent: 'center' }}>
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={7} style={{ marginBottom: '20px' }}>
-                            <TextField
-                                id="outlined-basic"
-                                label="Dealer Name"
-                                variant="outlined"
-                                size='small'
-                            />
-                        </Stack>
-                    </Stack>
-                    <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5}>
-                        <Button variant="contained">Search</Button>
-                        <Button variant="outlined" style={{ marginLeft: '10px', color: 'red' }}> Clear </Button>
-                    </Stack>
-                    {tableData.length == 0 ?
-                        <SearchNotFound searchQuery="Sub Categories" />
-                        :
-                        <Box
-                            display="flex"
-                            flexDirection={{ xs: 'column', sm: 'row' }}
-                            alignItems="center"
-                            justifyContent="center"
-                            spacing={1}
-                        >
-                            <Card style={{ justifycontent: 'center', width: '85rem' }} >
-                                <TableContainer >
-                                    <Table aria-label="simple table">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell align="center">Category Code</TableCell>
-                                                <TableCell align="center">Sub Category Code</TableCell>
-                                                <TableCell align="center">Dealer</TableCell>
-                                                {tableData.some((row) => row.bloodTypeName !== " ") && (
-                                                    <TableCell align="center">No. of Items</TableCell>
-                                                )}
-                                                {tableData.some((row) => row.amount !== 0.00) && (
-                                                    <TableCell align="center">Status</TableCell>
-                                                )}
-                                                {/* <TableCell align="center">Request Before</TableCell> */}
-                                                <TableCell align="center">Action</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {(rowsPerPage > 0
-                                                ? tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                                : tableData
-                                            )
-                                                .map((row) => {
-                                                    const dateParts = row.requestBefore.split('T')[0];
-                                                    const formattedDate = new Date(dateParts).toLocaleDateString();
-
-                                                    return (
-                                                        <TableRow key={row.donationRequestID}>
-                                                            <TableCell align="center" component="th" scope="row">
-                                                                {row.donationTypeName}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                {row.name}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                {row.contactNumber}
-                                                            </TableCell>
-                                                            {row.bloodTypeName !== "" && (
-                                                                <TableCell align="center">
-                                                                    {row.bloodTypeName}
-                                                                </TableCell>
-                                                            )}
-                                                            {row.amount !== 0.00 && (
-                                                                <TableCell align="center">
-                                                                    {row.amount.toFixed(2)}
-                                                                </TableCell>
-                                                            )}
-                                                            <TableCell align="center">
-                                                                {formattedDate}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                <VolunteerActivismIcon />
-                                                                {/* <IconButton aria-label="delete" size="small" onClick={() => handleClick(row)}>
-                                <VolunteerActivismIcon />
-                              </IconButton> */}
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    );
-                                                })}
-                                        </TableBody>
-                                        {/* <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                        colSpan={6}
-                        count={tableData.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                          inputProps: {
-                            'aria-label': 'rows per page',
-                          },
-                          native: true,
-                        }}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter> */}
-                                    </Table>
-                                </TableContainer>
-                            </Card>
-                        </Box>
-                    }
-                </Container >
+                            </Stack>
+                            <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5} style={{ marginTop: '10px' }}>
+                                <Button
+                                    type="submit"
+                                    size='small'
+                                    variant="contained"
+                                >
+                                    {"Search"}
+                                </Button>
+                                <Button variant="outlined" style={{ marginLeft: '10px', color: 'red' }} onClick={handleClear}> Clear </Button>
+                            </Stack>
+                            {tableData.length == 0 ?
+                                <SearchNotFound searchQuery="Sub Category" />
+                                :
+                                <Box
+                                    display="flex"
+                                    flexDirection={{ xs: 'column', sm: 'row' }}
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    spacing={1}
+                                >
+                                    <Card style={{ justifycontent: 'center', width: '85rem' }} >
+                                        <TableContainer >
+                                            <Table aria-label="simple table">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell align="center"><strong>Sub Category Code</strong></TableCell>
+                                                        <TableCell align="center"><strong>Sub Category</strong></TableCell>
+                                                        <TableCell align="center"><strong>Category</strong></TableCell>
+                                                        <TableCell align="center"><strong>Dealer</strong></TableCell>
+                                                        <TableCell align="center"><strong>Status</strong></TableCell>
+                                                        <TableCell align="center"><strong>Action</strong></TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {(rowsPerPage > 0
+                                                        ? tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                                        : tableData
+                                                    )
+                                                        .map((row) => {
+                                                            return (
+                                                                <TableRow key={row.itemCategoryID}>
+                                                                    <TableCell align="center" component="th" scope="row">
+                                                                        {row.subCategoryCode}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.subCategoryName}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.itemCategoryCode}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.dealerName}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.isActive == true ? 'Active' : 'Inactive'}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        <IconButton aria-label="delete" size="small" onClick={() => handleClickEdit(row.subCategoryID)}>
+                                                                            <EditIcon />
+                                                                        </IconButton>
+                                                                        <IconButton aria-label="delete" size="small" onClick={() => handleClickDelete(row.subCategoryID)}>
+                                                                            <DeleteIcon style={{ color: 'red' }} />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        })}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Card>
+                                </Box>
+                            }
+                        </Container >
+                    </Form>
+                </FormikProvider>
             </Card>
         </Box>
     );

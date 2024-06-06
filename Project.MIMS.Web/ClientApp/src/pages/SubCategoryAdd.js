@@ -83,7 +83,7 @@ TablePaginationActions.propTypes = {
 
 export default function SubCategoryAddPage() {
     const navigate = useNavigate();
-    const { itemCategoryID } = useParams();
+    const { subCategoryID } = useParams();
     const [userId, setUserId] = useState(null);
     const [isUpdate, setIsUpdate] = useState(false);
     const [itemCategoryList, setItemCategoryList] = useState([]);
@@ -102,9 +102,9 @@ export default function SubCategoryAddPage() {
         setUserId(userIdFromStorage);
         GetItemCategoryListForDropdown();
         GetDealerListForDropdown();
-        if (itemCategoryID > 0) {
+        if (subCategoryID > 0) {
             setIsUpdate(true)
-            GetItemCategoryDetailsByID(itemCategoryID);
+            GetItemCategoryDetailsByID(subCategoryID);
         } else {
             setIsUpdate(false)
         }
