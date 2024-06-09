@@ -6,6 +6,7 @@ namespace Project.MIMS.Core.Models.ItemManagement
 {
     public class ItemSubCategoryModel
     {
+        public int SubCategoryID { get; set; }
         public string SubCategoryName { get; set; }
         public string SubCategoryCode { get; set; }
         public bool IsActive { get; set; }

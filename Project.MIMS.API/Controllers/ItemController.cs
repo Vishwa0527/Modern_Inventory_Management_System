@@ -81,5 +81,12 @@ namespace Project.MIMS.API.Controllers
         {
             return await itemService.DeleteItemSubCategory(SubCategoryID, UserID);
         }
+
+        [HttpGet]
+        [Route("GetItemSubCategoryDetailsByID")]
+        public async Task<MIMSResponse> GetItemSubCategoryDetailsByID(int SubCategoryID)
+        {
+            return await itemService.GetItemSubCategoryDetailsByID(SubCategoryID);
+        }
     }
 }
