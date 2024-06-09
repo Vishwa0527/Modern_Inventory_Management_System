@@ -203,7 +203,7 @@ namespace Project.MIMS.Services.ItemManagement
             {
                 var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
                 {
-                    { "SubCategoryID", Tuple.Create(0.ToString(), DbType.Int32, ParameterDirection.InputOutput) },
+                    { "SubCategoryID", Tuple.Create(model.SubCategoryID.ToString(), DbType.Int32, ParameterDirection.InputOutput) },
                     { "SubCategoryCode", Tuple.Create(model.SubCategoryCode.ToString(), DbType.String, ParameterDirection.Input) },
                     { "SubCategoryName", Tuple.Create(model.SubCategoryName.ToString(), DbType.String, ParameterDirection.Input) },
                     { "CategoryID", Tuple.Create(model.CategoryID.ToString(), DbType.Int32, ParameterDirection.Input) },
@@ -282,6 +282,32 @@ namespace Project.MIMS.Services.ItemManagement
                 else
                 {
                     return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "Error While Deleting Item Sub Category", result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<MIMSResponse> GetItemSubCategoryDetailsByID(int SubCategoryID)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "SubCategoryID", Tuple.Create(SubCategoryID.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<ItemSubCategoryModel>().GetEntityBySPAsync("[Item].[GetItemSubCategoryDetailsByID]", parameters);
+                if (result != null)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Sub Category Details Retrieved Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "No Records to Display", result);
                 }
             }
             catch (Exception ex)

@@ -138,14 +138,17 @@ export default function SubCategoryAddPage() {
     async function SubmitForm(values) {
         if (isUpdate) {
             let model = {
-                categoryName: values.categoryName,
-                categoryCode: values.categoryCode,
-                createdBy: userId == null ? 0 : parseInt(userId),
-                itemCategoryID: parseInt(itemCategoryID),
-                isActive: values.isActive
+                subCategoryID: parseInt(subCategoryID),
+                subCategoryName: values.subCategoryName,
+                subCategoryCode: values.subCategoryCode,
+                isActive: values.isActive,
+                categoryID: values.categoryID,
+                description: values.description,
+                dealerID: values.dealerID,
+                createdBy: userId == null ? 0 : parseInt(userId)
             }
 
-            const result = await axios.post('https://localhost:7211/api/Item/ItemCategoryUpdate', model);
+            const result = await axios.post('https://localhost:7211/api/Item/ItemSubCategorySave', model);
             if (result.data.statusCode === "Error") {
                 toast.error(result.data.message);
                 return;
@@ -158,6 +161,7 @@ export default function SubCategoryAddPage() {
             }
         } else {
             let model = {
+                subCategoryID: parseInt(0),
                 subCategoryName: values.subCategoryName,
                 subCategoryCode: values.subCategoryCode,
                 isActive: values.isActive,
@@ -183,14 +187,16 @@ export default function SubCategoryAddPage() {
 
     const { setValues, handleSubmit, getFieldProps, values } = formik;
 
-    async function GetItemCategoryDetailsByID(itemCategoryID) {
-        const result = await axios.get('https://localhost:7211/api/Item/GetItemCategoryDetailsByID', { params: { itemCategoryID: parseInt(itemCategoryID) } });
+    async function GetItemCategoryDetailsByID(subCategoryID) {
+        const result = await axios.get('https://localhost:7211/api/Item/GetItemSubCategoryDetailsByID', { params: { subCategoryID: parseInt(subCategoryID) } });
         setValues({
             ...values,
-            categoryCode: result.data.data.categoryCode,
-            categoryName: result.data.data.categoryName,
-            isActive: result.data.data.isActive
-
+            subCategoryCode: result.data.data.subCategoryCode,
+            subCategoryName: result.data.data.subCategoryName,
+            isActive: result.data.data.isActive,
+            categoryID: result.data.data.categoryID,
+            description: result.data.data.description,
+            dealerID: result.data.data.dealerID
         })
     }
 
@@ -225,14 +231,14 @@ export default function SubCategoryAddPage() {
     }
 
     function handleClick() {
-        navigate('/dashboard/category');
+        navigate('/dashboard/SubCategory');
     }
 
     return (
         <Box mt={0}>
             <Card>
                 <Helmet>
-                    <title>{isUpdate ? "Update Category | MIMS" : "Add Category | MIMS"}</title>
+                    <title>{isUpdate ? "Update Sub Category | MIMS" : "Add Category | MIMS"}</title>
                 </Helmet>
                 <Divider />
                 <CardContent>
