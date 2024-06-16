@@ -316,5 +316,180 @@ namespace Project.MIMS.Services.ItemManagement
                 throw ex;
             }
         }
+
+        public async Task<MIMSResponse> GetItemSubCategoryListForDropdown()
+        {
+            try
+            {
+                var result = await UnitOfWork.Repository<ItemSubCategoryModel>().GetEntitiesBySPAsyncWithoutParameters("[Item].[GetItemSubCategoryListForDropdown]");
+                if (result != null)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Sub Category Details Retrieved Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "No Records to Display", result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<MIMSResponse> ItemSave(List<ItemSaveModel> model)
+        {
+            try
+            {
+                foreach (var item in model)
+                {
+                    var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                    {
+                        { "ItemID", Tuple.Create(item.ItemID.ToString(), DbType.Int32, ParameterDirection.InputOutput) },
+                        { "SubCategoryID", Tuple.Create(item.SubCategoryID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                        { "ItemName", Tuple.Create(item.ItemName.ToString(), DbType.String, ParameterDirection.Input) },
+                        { "ItemCode", Tuple.Create(item.ItemCode.ToString(), DbType.String, ParameterDirection.Input) },
+                        { "SerialNumber", Tuple.Create(item.SerialNumber.ToString(), DbType.String, ParameterDirection.Input) },
+                        { "RetailPrice", Tuple.Create(item.RetailPrice.ToString(), DbType.Decimal, ParameterDirection.Input) },
+                        { "SellingPrice", Tuple.Create(item.SellingPrice.ToString(), DbType.Decimal, ParameterDirection.Input) },
+                        { "CreatedBy", Tuple.Create(item.CreatedBy.ToString(), DbType.Int32, ParameterDirection.Input) }
+                    };
+
+                    var result = await UnitOfWork.Repository<ItemSaveModel>().ExecuteSPWithInputOutputAsync("[Item].[ItemSave]", parameters);
+
+                    if (result <= 0)
+                    {
+                        return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "Item Save Failed", result);
+                    }
+                }
+                return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Items successfully saved", 1);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<MIMSResponse> GetItemsforListing(ItemSaveModel model)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "SubCategoryID", Tuple.Create(model.SubCategoryID == 0 ? null : model.SubCategoryID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "ItemCode", Tuple.Create(model.ItemCode == "" ? null : model.ItemCode.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "SerialNumber", Tuple.Create(model.SerialNumber == "" ? null : model.SerialNumber.ToString(), DbType.String, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<ItemListingModel>().GetEntitiesBySPAsync("[Item].[GetItemsforListing]", parameters);
+                if (result.Count() > 0)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Details Retrieved Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "No Records to Display", result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<MIMSResponse> DeleteItem(int ItemID, int UserID)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "ItemID", Tuple.Create(ItemID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "UserID", Tuple.Create(UserID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "Result", Tuple.Create("-1".ToString(), DbType.Int32, ParameterDirection.Output) }
+                };
+
+                var result = await UnitOfWork.Repository<ItemSaveModel>().ExecuteSPWithInputOutputAsync("[Item].[DeleteItem]", parameters);
+                if (result > 0)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Deleted Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "Error While Deleting Item", result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<MIMSResponse> GetItemDetailsByID(int ItemID)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "ItemID", Tuple.Create(ItemID.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<ItemSaveModel>().GetEntityBySPAsync("[Item].[GetItemDetailsByID]", parameters);
+                if (result != null)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Details Retrieved Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "No Records to Display", result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<MIMSResponse> ItemUpdate(ItemSaveModel model)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                {
+                    { "ItemID", Tuple.Create(model.ItemID.ToString(), DbType.Int32, ParameterDirection.InputOutput) },
+                    { "SubCategoryID", Tuple.Create(model.SubCategoryID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "ItemName", Tuple.Create(model.ItemName.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "ItemCode", Tuple.Create(model.ItemCode.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "SerialNumber", Tuple.Create(model.SerialNumber.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "RetailPrice", Tuple.Create(model.RetailPrice.ToString(), DbType.Decimal, ParameterDirection.Input) },
+                    { "SellingPrice", Tuple.Create(model.SellingPrice.ToString(), DbType.Decimal, ParameterDirection.Input) },
+                    { "CreatedBy", Tuple.Create(model.CreatedBy.ToString(), DbType.Int32, ParameterDirection.Input) }
+                };
+
+                var result = await UnitOfWork.Repository<ItemSaveModel>().ExecuteSPWithInputOutputAsync("[Item].[ItemUpdate]", parameters);
+                if (result == -1)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "Item Code Already Exists", result);
+                }
+                else if (result > 0)
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Success.ToString(), "Item Updated Sucessfully", result);
+                }
+                else
+                {
+                    return MIMSResponse.GenerateResponseMessage(MIMSResponseEnum.Error.ToString(), "Item Update Failed", result);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }

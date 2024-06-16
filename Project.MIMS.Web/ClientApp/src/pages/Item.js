@@ -23,7 +23,12 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import { Link as RouterLink, useNavigate, useHref } from 'react-router-dom';
+import { useFormik, Form, FormikProvider } from 'formik';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import * as Yup from 'yup';
+import { ToastContainer, toast } from 'react-toastify';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
@@ -91,25 +96,19 @@ export default function ItemPage() {
     const navigate = useNavigate();
     const [openFilter, setOpenFilter] = useState(false);
     const [userId, setUserId] = useState(null);
-    const [donationTypeID, setDonationTypeID] = useState(0);
+    const [subCategoryID, setSubCategoryID] = useState(0);
+    const [itemCode, setItemCode] = useState("");
+    const [serialNumber, SetSSerialNumber] = useState("");
+    const [itemSubCategoryList, setItemSubCategoryList] = useState([]);
     const [tableData, setTableData] = useState([]);
+
+    let encrypted = "";
 
     useEffect(() => {
         const userIdFromStorage = localStorage.getItem('userId');
         setUserId(userIdFromStorage);
+        GetItemSubCategoryListForDropdown();
     }, []);
-
-    useEffect(() => {
-        if (userId != null) {
-            GetDonationTypeID();
-        }
-    }, [userId]);
-
-    useEffect(() => {
-        if (donationTypeID != 0) {
-            DonationRequestDetailsGet();
-        }
-    }, [donationTypeID]);
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -126,20 +125,82 @@ export default function ItemPage() {
         setPage(0);
     };
 
-    async function GetDonationTypeID() {
-        const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
-        setDonationTypeID(result.data.data.donationTypeID);
-        return;
+    function handleClick() {
+        var itemID = 0
+        navigate('/dashboard/ItemAdd/' + itemID);
     }
 
-    async function DonationRequestDetailsGet() {
-        const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
+    function handleClickEdit(itemID) {
+        navigate('/dashboard/ItemAdd/' + itemID)
+    }
+
+    const formik = useFormik({
+        initialValues: {
+            subCategoryID: subCategoryID,
+            itemCode: itemCode,
+            serialNumber: serialNumber
+        },
+
+        validationSchema: () => {
+            return Yup.object().shape({
+            });
+        },
+
+        onSubmit: (values) => {
+            ItemSubCategoryDetailsGet(values);
+        }
+    }
+    );
+
+    const { errors, touched, handleSubmit, getFieldProps, values } = formik;
+
+    async function ItemSubCategoryDetailsGet(values) {
+        let model = {
+            subCategoryID: parseInt(values.subCategoryID),
+            itemCode: values.itemCode,
+            serialNumber: values.serialNumber
+        }
+        const result = await axios.post('https://localhost:7211/api/Item/GetItemsforListing', model);
         setTableData(result.data.data);
         return;
     }
 
-    function handleClick() {
-        navigate('/dashboard/ItemAdd');
+    async function handleClickDelete(itemID) {
+        const result = await axios.get('https://localhost:7211/api/Item/DeleteItem', { params: { itemID: parseInt(itemID), userID: parseInt(userId) } });
+        if (result.data.statusCode === "Error") {
+            toast.error(result.data.message);
+            return;
+        }
+        else {
+            toast.success(result.data.message);
+            let model = {
+                subCategoryID: formik.values.subCategoryID,
+                itemCode: formik.values.itemCode,
+                serialNumber: formik.values.serialNumber
+            }
+            ItemSubCategoryDetailsGet(model)
+        }
+    }
+
+    async function GetItemSubCategoryListForDropdown() {
+        const result = await axios.get('https://localhost:7211/api/Item/GetItemSubCategoryListForDropdown');
+        setItemSubCategoryList(result.data.data)
+    }
+
+    function generateDropDownMenu(data) {
+        let items = []
+        if (data != null) {
+            data.forEach(x => {
+                items.push(x.isActive == true ? <MenuItem key={x.subCategoryID} value={x.subCategoryID}>{x.subCategoryName}</MenuItem> : null)
+            });
+        }
+        return items
+    }
+
+
+    function handleClear() {
+        setTableData([])
+        formik.resetForm()
     }
 
     return (
@@ -148,166 +209,150 @@ export default function ItemPage() {
                 <Helmet>
                     <title> Item | MIMS </title>
                 </Helmet>
-
-                <Container>
-                    {/* <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h6" sx={{ mb: 5 }}>
-            Category
-          </Typography>
-        </Stack>
-        <Stack spacing={2}>
-          <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5}>
-            <Button variant="contained"><b>+</b></Button>
-          </Stack>
-        </Stack> */}
-                    <Stack direction="row" alignItems="center" justifyContent="space-between" style={{ marginTop: '10px' }}>
-                        <Typography variant="h6">
-                            Item
-                        </Typography>
-                        <Button variant="contained"
-                            onClick={handleClick}
-                        ><AddIcon /></Button>
-                    </Stack>
-                    <br />
-                    <Stack spacing={2} style={{ marginBottom: '20px', justifyContent: 'center' }}>
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={10} style={{ marginBottom: '20px' }}>
-                            <TextField
-                                id="outlined-basic"
-                                label="Category Code"
-                                variant="outlined"
-                                size='small'
-                            />
-                            <TextField
-                                id="outlined-basic"
-                                label="Dealer Name"
-                                variant="outlined"
-                                size='small'
-                            />
-                            <TextField
-                                id="outlined-basic"
-                                label="Sub Category Code"
-                                variant="outlined"
-                                size='small'
-                            />
-                        </Stack>
-                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={10} style={{ marginBottom: '20px' }}>
-                            <TextField
-                                id="outlined-basic"
-                                label="Item Code"
-                                variant="outlined"
-                                size='small'
-                            />
-                            <TextField
-                                id="outlined-basic"
-                                label="Serial Number"
-                                variant="outlined"
-                                size='small'
-                            />
-                        </Stack>
-
-                    </Stack>
-                    <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5}>
-                        <Button variant="contained">Search</Button>
-                        <Button variant="outlined" style={{ marginLeft: '10px', color: 'red' }}> Clear </Button>
-                    </Stack>
-                    {tableData.length == 0 ?
-                        <SearchNotFound searchQuery="Items" />
-                        :
-                        <Box
-                            display="flex"
-                            flexDirection={{ xs: 'column', sm: 'row' }}
-                            alignItems="center"
-                            justifyContent="center"
-                            spacing={1}
-                        >
-                            <Card style={{ justifycontent: 'center', width: '85rem' }} >
-                                <TableContainer >
-                                    <Table aria-label="simple table">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell align="center">Item Code</TableCell>
-                                                <TableCell align="center">Category Code</TableCell>
-                                                <TableCell align="center">Sub Category Code</TableCell>
-                                                {tableData.some((row) => row.bloodTypeName !== " ") && (
-                                                    <TableCell align="center">Supplier/ Dealer</TableCell>
-                                                )}
-                                                {tableData.some((row) => row.amount !== 0.00) && (
-                                                    <TableCell align="center">Price</TableCell>
-                                                )}
-                                                {/* <TableCell align="center">Request Before</TableCell> */}
-                                                <TableCell align="center">QR</TableCell>
-                                                <TableCell align="center">Action</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {(rowsPerPage > 0
-                                                ? tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                                : tableData
-                                            )
-                                                .map((row) => {
-                                                    const dateParts = row.requestBefore.split('T')[0];
-                                                    const formattedDate = new Date(dateParts).toLocaleDateString();
-
-                                                    return (
-                                                        <TableRow key={row.donationRequestID}>
-                                                            <TableCell align="center" component="th" scope="row">
-                                                                {row.donationTypeName}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                {row.name}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                {row.contactNumber}
-                                                            </TableCell>
-                                                            {row.bloodTypeName !== "" && (
-                                                                <TableCell align="center">
-                                                                    {row.bloodTypeName}
-                                                                </TableCell>
-                                                            )}
-                                                            {row.amount !== 0.00 && (
-                                                                <TableCell align="center">
-                                                                    {row.amount.toFixed(2)}
-                                                                </TableCell>
-                                                            )}
-                                                            <TableCell align="center">
-                                                                {formattedDate}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                <VolunteerActivismIcon />
-                                                                {/* <IconButton aria-label="delete" size="small" onClick={() => handleClick(row)}>
-                                <VolunteerActivismIcon />
-                              </IconButton> */}
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    );
-                                                })}
-                                        </TableBody>
-                                        {/* <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                        colSpan={6}
-                        count={tableData.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                          inputProps: {
-                            'aria-label': 'rows per page',
-                          },
-                          native: true,
-                        }}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                        ActionsComponent={TablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter> */}
-                                    </Table>
-                                </TableContainer>
-                            </Card>
-                        </Box>
-                    }
-                </Container >
+                <FormikProvider value={formik}>
+                    <ToastContainer
+                        position="bottom-right"
+                        pauseOnHover
+                    />
+                    <Form
+                        autoComplete="off"
+                        disabled={!(formik.isValid && formik.dirty)}
+                        noValidate
+                        onSubmit={handleSubmit}
+                    >
+                        <Container>
+                            <Stack direction="row" alignItems="center" justifyContent="space-between" style={{ marginTop: '10px' }}>
+                                <Typography variant="h6">
+                                    Item
+                                </Typography>
+                                <Button variant="contained"
+                                    onClick={handleClick}
+                                ><AddIcon /></Button>
+                            </Stack>
+                            <br />
+                            <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    label="Sub Category"
+                                    value={formik.values.subCategoryID}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('subCategoryID')}
+                                    error={Boolean(formik.touched.subCategoryID && formik.errors.subCategoryID)}
+                                    helperText={formik.touched.subCategoryID && formik.errors.subCategoryID}
+                                    sx={{ flex: 1 }}
+                                >
+                                    <MenuItem key={0} value={0}> Select Item Sub Category</MenuItem>
+                                    {generateDropDownMenu(itemSubCategoryList)}
+                                </TextField>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label="Item Name"
+                                    value={formik.values.itemName}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('itemName')}
+                                    error={Boolean(formik.touched.itemName && formik.errors.itemName)}
+                                    helperText={formik.touched.itemName && formik.errors.itemName}
+                                    sx={{ flex: 1 }}
+                                />
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label="Item Code"
+                                    value={formik.values.itemCode}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('itemCode')}
+                                    error={Boolean(formik.touched.itemCode && formik.errors.itemCode)}
+                                    helperText={formik.touched.itemCode && formik.errors.itemCode}
+                                    sx={{ flex: 1 }}
+                                />
+                            </Stack>
+                            <Stack direction="row" alignItems="right" justifyContent="flex-end" mb={5} style={{ marginTop: '10px' }}>
+                                <Button
+                                    type="submit"
+                                    size='small'
+                                    variant="contained"
+                                >
+                                    {"Search"}
+                                </Button>
+                                <Button variant="outlined" style={{ marginLeft: '10px', color: 'red' }} onClick={handleClear}> Clear </Button>
+                            </Stack>
+                            {tableData.length == 0 ?
+                                <SearchNotFound searchQuery="Sub Category" />
+                                :
+                                <Box
+                                    display="flex"
+                                    flexDirection={{ xs: 'column', sm: 'row' }}
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    spacing={1}
+                                >
+                                    <Card style={{ justifycontent: 'center', width: '85rem' }} >
+                                        <TableContainer >
+                                            <Table aria-label="simple table">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell align="center"><strong>Sub Category</strong></TableCell>
+                                                        <TableCell align="center"><strong>Item Name</strong></TableCell>
+                                                        <TableCell align="center"><strong>Item Code</strong></TableCell>
+                                                        <TableCell align="center"><strong>Serial Number</strong></TableCell>
+                                                        <TableCell align="center"><strong>Retail Price</strong></TableCell>
+                                                        <TableCell align="center"><strong>Selling Price</strong></TableCell>
+                                                        <TableCell align="center"><strong>Status</strong></TableCell>
+                                                        <TableCell align="center"><strong>Action</strong></TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {(rowsPerPage > 0
+                                                        ? tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                                        : tableData
+                                                    )
+                                                        .map((row) => {
+                                                            return (
+                                                                <TableRow key={row.itemID}>
+                                                                    <TableCell align="center" component="th" scope="row">
+                                                                        {row.subCategoryName}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.itemName}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.itemCode}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.serialNumber}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.retailPrice}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.sellingPrice}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {row.isActive == true ? 'Active' : 'Inactive'}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        <IconButton aria-label="delete" size="small" onClick={() => handleClickEdit(row.itemID)}>
+                                                                            <EditIcon />
+                                                                        </IconButton>
+                                                                        <IconButton aria-label="delete" size="small" onClick={() => handleClickDelete(row.itemID)}>
+                                                                            <DeleteIcon style={{ color: 'red' }} />
+                                                                        </IconButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        })}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Card>
+                                </Box>
+                            }
+                        </Container >
+                    </Form>
+                </FormikProvider>
             </Card>
         </Box>
     );

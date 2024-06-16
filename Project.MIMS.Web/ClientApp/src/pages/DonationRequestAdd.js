@@ -134,7 +134,6 @@ export default function DonationRequestAdd() {
             amount: values.amount,
             bloodType: parseInt(values.bloodType)
         }
-        console.log(model)
         const result = await axios.post('https://localhost:7211/api/DonationRequest/SaveDonationRequest', model);
         if (result.data.statusCode === "Error") {
             toast.error(result.data.message);
@@ -174,8 +173,6 @@ export default function DonationRequestAdd() {
 
         })
     }
-
-    console.log("formik", formik.values)
 
     return (
         <Box>

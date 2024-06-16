@@ -39,7 +39,7 @@ export default function Router() {
         { path: 'Dealer', element: <DealerPage /> },
         { path: 'Item', element: <ItemPage /> },
         { path: 'DealerAdd', element: <DealerAddPage /> },
-        { path: 'ItemAdd', element: <ItemAddPage /> },
+        { path: 'ItemAdd/:itemID', element: <ItemAddPage /> },
         { path: 'Sales', element: <SalesPage /> },
         // { path: 'profilePage', element: <ProfilePage /> },
         { path: 'donationRequestAdd', element: <DonationRequestAdd /> },
