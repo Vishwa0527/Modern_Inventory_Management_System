@@ -40,7 +40,6 @@ export default function SubCategoryPage() {
     const [itemCategoryList, setItemCategoryList] = useState([]);
     const [dealerList, setDealerList] = useState([]);
     const [tableData, setTableData] = useState([]);
-    console.log("tableData", tableData)
     let encrypted = "";
 
     useEffect(() => {

@@ -88,5 +88,46 @@ namespace Project.MIMS.API.Controllers
         {
             return await itemService.GetItemSubCategoryDetailsByID(SubCategoryID);
         }
+
+        [HttpGet]
+        [Route("GetItemSubCategoryListForDropdown")]
+        public async Task<MIMSResponse> GetItemSubCategoryListForDropdown()
+        {
+            return await itemService.GetItemSubCategoryListForDropdown();
+        }
+
+        [HttpPost]
+        [Route("ItemSave")]
+        public async Task<MIMSResponse> ItemSave(List<ItemSaveModel> model)
+        {
+            return await itemService.ItemSave(model);
+        }
+
+        [HttpPost]
+        [Route("GetItemsforListing")]
+        public async Task<MIMSResponse> GetItemsforListing(ItemSaveModel model)
+        {
+            return await itemService.GetItemsforListing(model);
+        }
+
+        [HttpGet]
+        [Route("DeleteItem")]
+        public async Task<MIMSResponse> DeleteItem(int ItemID, int UserID)
+        {
+            return await itemService.DeleteItem(ItemID, UserID);
+        }
+        [HttpGet]
+        [Route("GetItemDetailsByID")]
+        public async Task<MIMSResponse> GetItemDetailsByID(int ItemID)
+        {
+            return await itemService.GetItemDetailsByID(ItemID);
+        }
+
+        [HttpPost]
+        [Route("ItemUpdate")]
+        public async Task<MIMSResponse> ItemUpdate(ItemSaveModel model)
+        {
+            return await itemService.ItemUpdate(model);
+        }
     }
 }
