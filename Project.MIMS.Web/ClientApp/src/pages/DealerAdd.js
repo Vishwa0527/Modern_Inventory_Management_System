@@ -14,6 +14,9 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import PropTypes, { func } from 'prop-types'
 import { useTheme } from '@mui/material/styles'
+import { useFormik, Form, FormikProvider } from 'formik';
+import * as Yup from 'yup';
+import { ToastContainer, toast } from 'react-toastify';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -27,7 +30,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link as RouterLink, useNavigate, useHref } from 'react-router-dom';
+import { useParams, useNavigate, useHref } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
@@ -93,33 +96,72 @@ TablePaginationActions.propTypes = {
 
 export default function DealerAddPage() {
     const navigate = useNavigate();
-    const [openFilter, setOpenFilter] = useState(false);
+    const { dealerID } = useParams();
+    const [isUpdate, setIsUpdate] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [buttonDisable, setButtonDisable] = useState(false);
     const [donationTypeID, setDonationTypeID] = useState(0);
-    const [tableData, setTableData] = useState([]);
+    const [formData, setFormData] = useState({
+        dealerName: '',
+        regNo: '',
+        contactNo: '',
+        address: '',
+        email: ''
+    });
 
     useEffect(() => {
         const userIdFromStorage = localStorage.getItem('userId');
         setUserId(userIdFromStorage);
+        if (dealerID > 0) {
+            setIsUpdate(true)
+            GetDealerDetailsByDealerID(dealerID);
+        } else {
+            setIsUpdate(false)
+        }
     }, []);
 
-    useEffect(() => {
-        if (userId != null) {
-            GetDonationTypeID();
-        }
-    }, [userId]);
+    // useEffect(() => {
+    //     if (userId != null) {
+    //         GetDonationTypeID();
+    //     }
+    // }, [userId]);
 
-    useEffect(() => {
-        if (donationTypeID != 0) {
-            DonationRequestDetailsGet();
+    // useEffect(() => {
+    //     if (donationTypeID != 0) {
+    //         DonationRequestDetailsGet();
+    //     }
+    // }, [donationTypeID]);
+
+    const formik = useFormik({
+        initialValues: {
+            dealerName: formData.dealerName,
+            regNo: formData.regNo,
+            contactNo: formData.contactNo,
+            address: formData.address,
+            email: formData.email
+        },
+
+        validationSchema: () => {
+            return Yup.object().shape({
+                dealerName: Yup.string().required("Please fill the dealer name"),
+                regNo: Yup.string().required("Please fill the registration No"),
+                contactNo: Yup.string().required("Please fill the contact No"),
+                address: Yup.string().required("Please fill the address"),
+                email: Yup.string().required("Please fill the email"),
+            });
+        },
+
+        onSubmit: (values) => {
+            SubmitForm(values);
         }
-    }, [donationTypeID]);
+    }
+    );
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
+    // const emptyRows =
+    //     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -130,97 +172,189 @@ export default function DealerAddPage() {
         setPage(0);
     };
 
-    async function GetDonationTypeID() {
-        const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
-        setDonationTypeID(result.data.data.donationTypeID);
+    async function GetDealerDetailsByDealerID(dealerID) {
+        const result = await axios.get('https://localhost:7211/api/Dealer/GetDealerDetailsByDealerID', { params: { dealerID: parseInt(dealerID) } });
+        setValues({
+            ...values,
+            dealerName: result.data.data.dealerName,
+            regNo: result.data.data.regNo,
+            contactNo: result.data.data.contactNo,
+            address: result.data.data.address,
+            email: result.data.data.email
+        });
         return;
     }
 
-    async function DonationRequestDetailsGet() {
-        const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
-        setTableData(result.data.data);
-        return;
-    }
+    // async function GetDonationTypeID() {
+    //     const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
+    //     setDonationTypeID(result.data.data.donationTypeID);
+    //     return;
+    // }
+
+    // async function DonationRequestDetailsGet() {
+    //     const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
+    //     setTableData(result.data.data);
+    //     return;
+    // }
 
     function handleClick() {
         navigate('/dashboard/Dealer');
     }
 
+    async function SubmitForm(values) {
+        setButtonDisable(true);
+        let model = {
+            dealerID: dealerID,
+            dealerName: values.dealerName,
+            regNo: values.regNo,
+            contactNo: values.contactNo,
+            address: values.address,
+            email: values.email,
+            createdBy: userId == null ? 0 : parseInt(userId),
+        }
+        if (isUpdate) {
+            const result = await axios.post('https://localhost:7211/api/Dealer/DealerUpdate', model);
+            if (result.data.statusCode === "Error") {
+                toast.error(result.data.message);
+                setButtonDisable(false);
+                return;
+            }
+            else {
+                //setButtonDisable(false);
+                toast.success(result.data.message, {
+                    autoClose: 500,
+                    onClose: () => navigate('/dashboard/Dealer', { replace: true })
+                });
+            }
+        } else {
+            const result = await axios.post('https://localhost:7211/api/Dealer/DealerSave', model);
+            if (result.data.statusCode === "Error") {
+                toast.error(result.data.message);
+                setButtonDisable(false);
+                return;
+            }
+            else {
+                //setButtonDisable(false);
+                toast.success(result.data.message, {
+                    autoClose: 500,
+                    onClose: () => navigate('/dashboard/Dealer', { replace: true })
+                });
+            }
+        }
+    }
+
+    const { setValues, handleSubmit, getFieldProps, values } = formik;
+
     return (
         <Box mt={0}>
             <Card>
                 <Helmet>
-                    <title> Dealer Add | MIMS </title>
+                    <title>{isUpdate ? "Update Dealer | MIMS" : "Add Dealer | MIMS"}</title>
                 </Helmet>
                 <Divider />
                 <CardContent>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between">
-                        <Typography variant="h6">
-                            Add Dealer
-                        </Typography>
-                        <Button variant="contained"
-                            onClick={handleClick}><ArrowBackIcon /></Button>
-                    </Stack>
-                    <br />
-                    <Grid container spacing={3}>
-                        <Grid item md={4} xs={12}>
-                            <InputLabel shrink id="jobCategoryCode">
-                                Dealer Name *
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="jobCategoryCode"
-                                size='small'
-                                variant="outlined"
-                            />
-                        </Grid>
-                        <Grid item md={4} xs={12}>
-                            <InputLabel shrink id="jobCategoryCode">
-                                Contact No. *
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="jobCategoryCode"
-                                size='small'
-                                variant="outlined"
-                            />
-                        </Grid>
-                        <Grid item md={4} xs={12}>
-                            <InputLabel shrink id="jobCategoryName">
-                                Sub Category Code *
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="jobCategoryName"
-                                size='small'
-                                variant="outlined"
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={3}>
-                        <Grid item md={4} xs={12}>
-                            <InputLabel shrink id="description">
-                                Address
-                            </InputLabel>
-                            <TextField
-                                fullWidth
-                                name="description"
-                                size='small'
-                                variant="outlined"
-                            />
-                        </Grid>
-                    </Grid>
+                    <FormikProvider value={formik}>
+                        <ToastContainer
+                            position="bottom-right"
+                            pauseOnHover
+                        />
+                        <Form
+                            autoComplete="off"
+                            disabled={!(formik.isValid && formik.dirty)}
+                            noValidate
+                            onSubmit={handleSubmit}
+                        >
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Typography variant="h6">
+                                    {isUpdate ? "Update Dealer" : "Add Dealer"}
+                                </Typography>
+                                <Button variant="contained"
+                                    onClick={handleClick}><ArrowBackIcon /></Button>
+                            </Stack>
+                            <br />
+                            <Grid container spacing={3} style={{ marginTop: '25px' }}>
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Dealer Name *"
+                                        value={formik.values.dealerName}
+                                        onChange={formik.handleChange}
+                                        {...formik.getFieldProps('dealerName')}
+                                        error={Boolean(formik.touched.dealerName && formik.errors.dealerName)}
+                                        helperText={formik.touched.dealerName && formik.errors.dealerName}
+                                        sx={{ flex: 1 }}
+                                    />
+                                </Grid>
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Registration No. *"
+                                        value={formik.values.regNo}
+                                        onChange={formik.handleChange}
+                                        {...formik.getFieldProps('regNo')}
+                                        error={Boolean(formik.touched.regNo && formik.errors.regNo)}
+                                        helperText={formik.touched.regNo && formik.errors.regNo}
+                                        sx={{ flex: 1 }}
+                                    />
+                                </Grid>
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Contact No. *"
+                                        value={formik.values.contactNo}
+                                        onChange={formik.handleChange}
+                                        {...formik.getFieldProps('contactNo')}
+                                        error={Boolean(formik.touched.contactNo && formik.errors.contactNo)}
+                                        helperText={formik.touched.contactNo && formik.errors.contactNo}
+                                        sx={{ flex: 1 }}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={3}>
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Address *"
+                                        value={formik.values.address}
+                                        onChange={formik.handleChange}
+                                        {...formik.getFieldProps('address')}
+                                        error={Boolean(formik.touched.address && formik.errors.address)}
+                                        helperText={formik.touched.address && formik.errors.address}
+                                        sx={{ flex: 1 }}
+                                    />
+                                </Grid>
+                                <Grid item md={4} xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Email *"
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}
+                                        {...formik.getFieldProps('email')}
+                                        error={Boolean(formik.touched.email && formik.errors.email)}
+                                        helperText={formik.touched.email && formik.errors.email}
+                                        sx={{ flex: 1 }}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Box display="flex" justifyContent="flex-end" p={2}>
+                                <Button
+                                    color="primary"
+                                    type='submit'
+                                    size='small'
+                                    variant="contained"
+                                    disabled={buttonDisable}
+                                >
+                                    {!isUpdate ? "Save" : "Upadate"}
+                                </Button>
+                            </Box>
+                        </Form>
+                    </FormikProvider>
                 </CardContent>
-                <Box display="flex" justifyContent="flex-end" p={2}>
-                    <Button
-                        color="primary"
-                        type="submit"
-                        size='small'
-                        variant="contained"
-                    >
-                        {"Save"}
-                    </Button>
-                </Box>
             </Card>
         </Box>
     );
