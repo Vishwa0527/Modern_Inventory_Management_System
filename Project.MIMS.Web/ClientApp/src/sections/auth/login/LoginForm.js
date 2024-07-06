@@ -28,7 +28,7 @@ export default function LoginForm() {
   });
 
   async function login(values) {
-    const result = await axios.post('http://20.198.233.3:5080/api/User/Login', values);
+    const result = await axios.post(API_URL + '/api/User/Login', values);
     if (result.data.statusCode === "Error") {
       toast.error("Invalid User Name Or Password");
       setloginData({
