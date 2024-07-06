@@ -31,6 +31,7 @@ import Grid from '@material-ui/core/Grid';
 import InputLabel from '@material-ui/core/InputLabel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams, useNavigate, useHref } from 'react-router-dom';
+import { API_URL } from './configuration';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
@@ -120,18 +121,6 @@ export default function DealerAddPage() {
         }
     }, []);
 
-    // useEffect(() => {
-    //     if (userId != null) {
-    //         GetDonationTypeID();
-    //     }
-    // }, [userId]);
-
-    // useEffect(() => {
-    //     if (donationTypeID != 0) {
-    //         DonationRequestDetailsGet();
-    //     }
-    // }, [donationTypeID]);
-
     const formik = useFormik({
         initialValues: {
             dealerName: formData.dealerName,
@@ -173,7 +162,7 @@ export default function DealerAddPage() {
     };
 
     async function GetDealerDetailsByDealerID(dealerID) {
-        const result = await axios.get('https://localhost:7211/api/Dealer/GetDealerDetailsByDealerID', { params: { dealerID: parseInt(dealerID) } });
+        const result = await axios.get(API_URL + '/api/Dealer/GetDealerDetailsByDealerID', { params: { dealerID: parseInt(dealerID) } });
         setValues({
             ...values,
             dealerName: result.data.data.dealerName,
@@ -184,18 +173,6 @@ export default function DealerAddPage() {
         });
         return;
     }
-
-    // async function GetDonationTypeID() {
-    //     const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
-    //     setDonationTypeID(result.data.data.donationTypeID);
-    //     return;
-    // }
-
-    // async function DonationRequestDetailsGet() {
-    //     const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
-    //     setTableData(result.data.data);
-    //     return;
-    // }
 
     function handleClick() {
         navigate('/dashboard/Dealer');
@@ -213,7 +190,7 @@ export default function DealerAddPage() {
             createdBy: userId == null ? 0 : parseInt(userId),
         }
         if (isUpdate) {
-            const result = await axios.post('https://localhost:7211/api/Dealer/DealerUpdate', model);
+            const result = await axios.post(API_URL + '/api/Dealer/DealerUpdate', model);
             if (result.data.statusCode === "Error") {
                 toast.error(result.data.message);
                 setButtonDisable(false);
@@ -227,7 +204,7 @@ export default function DealerAddPage() {
                 });
             }
         } else {
-            const result = await axios.post('https://localhost:7211/api/Dealer/DealerSave', model);
+            const result = await axios.post(API_URL + '/api/Dealer/DealerSave', model);
             if (result.data.statusCode === "Error") {
                 toast.error(result.data.message);
                 setButtonDisable(false);

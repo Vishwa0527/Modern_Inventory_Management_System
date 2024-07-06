@@ -29,6 +29,7 @@ import { Link as RouterLink, useNavigate, useHref } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import { ToastContainer, toast } from 'react-toastify';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { API_URL } from './configuration';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
@@ -186,14 +187,14 @@ export default function DealerPage() {
             regNo: formData.regNo,
             contactNo: formData.contactNo,
         }
-        const result = await axios.post('https://localhost:7211/api/Dealer/GetDealerDetails', model);
+        const result = await axios.post(API_URL + '/api/Dealer/GetDealerDetails', model);
         setTableData(result.data.data);
         return;
     }
 
     async function GetDealersForDropdown() {
         var dealerArray = [];
-        const response = await axios.get('https://localhost:7211/api/Dealer/GetAllDealersForDropdown');
+        const response = await axios.get(API_URL + '/api/Dealer/GetAllDealersForDropdown');
         // for (let item of Object.entries(response.data.data)) {
         //     dealerArray[item[1]["dealerID"]] = item[1]["dealerName"]
         // }
