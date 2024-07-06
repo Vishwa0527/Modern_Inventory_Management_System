@@ -29,11 +29,15 @@ StripeConfiguration.ApiKey = "sk_test_26PHem9AhJZvU623DfE1x4sd";
 var app = builder.Build();
 string ReactWebServerUrl = configuration["AppSettings:ClientDomain"];
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.UseCors(builder =>
                 builder.WithOrigins(ReactWebServerUrl).AllowAnyHeader().AllowAnyMethod());
 app.UseHttpsRedirection();
