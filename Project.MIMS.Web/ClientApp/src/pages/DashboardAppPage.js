@@ -45,19 +45,19 @@ export default function DashboardAppPage() {
   }, []);
 
   async function GetAllDonationTypeLength() {
-    const result = await axios.get('https://localhost:7211/api/DonationType/GetAllDonationTypeLength');
+    const result = await axios.get('http://20.198.233.3:5080/api/DonationType/GetAllDonationTypeLength');
     setDonationTypeLegnth(result.data.data.length)
     return;
   }
 
   async function GetAllDonorLength() {
-    const result = await axios.get('https://localhost:7211/api/Donor/GetAllDonorLength');
+    const result = await axios.get('http://20.198.233.3:5080/api/Donor/GetAllDonorLength');
     setDonorLegnth(result.data.data.length)
     return;
   }
 
   async function GetAllSeekerLength() {
-    const result = await axios.get('https://localhost:7211/api/Seeker/GetAllSeekerLength');
+    const result = await axios.get('http://20.198.233.3:5080/api/Seeker/GetAllSeekerLength');
     setSeekerLegnth(result.data.data.length)
     return;
   }
@@ -161,7 +161,7 @@ export default function DashboardAppPage() {
               ]}
             />
           </Grid> */}
-{/* 
+          {/* 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current donation Types"
@@ -174,7 +174,7 @@ export default function DashboardAppPage() {
               chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
             />
           </Grid> */}
-{/* 
+          {/* 
           <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="News Update"

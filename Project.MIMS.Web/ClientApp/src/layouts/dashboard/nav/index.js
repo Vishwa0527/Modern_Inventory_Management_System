@@ -67,7 +67,7 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
 
   async function GetUserDetailsByUserID() {
-    const result = await axios.get('https://localhost:7211/api/User/GetUserDetailsByUserID', {
+    const result = await axios.get('http://20.198.233.3:5080/api/User/GetUserDetailsByUserID', {
       params: {
         userId: userId
       }
@@ -82,7 +82,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
   async function GetUserImageData() {
     if (userId !== 0) {
-      const result = await axios.get('https://localhost:7211/api/User/GetUserImageByUserID', {
+      const result = await axios.get('http://20.198.233.3:5080/api/User/GetUserImageByUserID', {
         params: {
           userId: userId
         }

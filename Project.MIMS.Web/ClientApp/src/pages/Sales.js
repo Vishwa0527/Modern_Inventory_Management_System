@@ -145,13 +145,13 @@ export default function SalePage() {
     };
 
     async function GetDonationTypeID() {
-        const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
+        const result = await axios.get('http://20.198.233.3:5080/api/DonationType/GetDonationTypeID', { params: { userID: parseInt(userId) } });
         setDonationTypeID(result.data.data.donationTypeID);
         return;
     }
 
     async function DonationRequestDetailsGet() {
-        const result = await axios.get('https://localhost:7211/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
+        const result = await axios.get('http://20.198.233.3:5080/api/DonationRequest/DonationRequestDetailsGet', { params: { DonationTypeID: parseInt(donationTypeID) } });
         setTableData(result.data.data);
         return;
     }

@@ -154,13 +154,13 @@ export default function CategoryPage() {
       categoryName: values.categoryName,
       categoryCode: values.categoryCode
     }
-    const result = await axios.post('https://localhost:7211/api/Item/GetItemCategoriesforListing', model);
+    const result = await axios.post('http://20.198.233.3:5080/api/Item/GetItemCategoriesforListing', model);
     setTableData(result.data.data);
     return;
   }
 
   async function handleClickDelete(itemCategoryID) {
-    const result = await axios.get('https://localhost:7211/api/Item/DeleteItemCategory', { params: { itemCategoryID: parseInt(itemCategoryID) } });
+    const result = await axios.get('http://20.198.233.3:5080/api/Item/DeleteItemCategory', { params: { itemCategoryID: parseInt(itemCategoryID) } });
     if (result.data.statusCode === "Error") {
       toast.error(result.data.message);
       return;

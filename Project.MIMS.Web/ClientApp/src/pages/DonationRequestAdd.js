@@ -120,7 +120,7 @@ export default function DonationRequestAdd() {
     }, []);
 
     async function GetCurrentSeekerID() {
-        const result = await axios.get('https://localhost:7211/api/Seeker/GetCurrentSeekerID', { params: { userId: parseInt(userId) } });
+        const result = await axios.get('http://20.198.233.3:5080/api/Seeker/GetCurrentSeekerID', { params: { userId: parseInt(userId) } });
         setSeekerID(result.data.data.seekerID);
         return;
     }
@@ -134,7 +134,7 @@ export default function DonationRequestAdd() {
             amount: values.amount,
             bloodType: parseInt(values.bloodType)
         }
-        const result = await axios.post('https://localhost:7211/api/DonationRequest/SaveDonationRequest', model);
+        const result = await axios.post('http://20.198.233.3:5080/api/DonationRequest/SaveDonationRequest', model);
         if (result.data.statusCode === "Error") {
             toast.error(result.data.message);
             return;
@@ -149,7 +149,7 @@ export default function DonationRequestAdd() {
 
 
     async function getDonationTypesForTheDropDown() {
-        const result = await axios.get('https://localhost:7211/api/DonationType/GetDonationTypesForTheDropDown');
+        const result = await axios.get('http://20.198.233.3:5080/api/DonationType/GetDonationTypesForTheDropDown');
         setDonationTypes(result.data.data);
     }
 

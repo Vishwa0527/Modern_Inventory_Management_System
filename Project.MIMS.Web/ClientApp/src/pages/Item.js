@@ -160,13 +160,13 @@ export default function ItemPage() {
             itemCode: values.itemCode,
             serialNumber: values.serialNumber
         }
-        const result = await axios.post('https://localhost:7211/api/Item/GetItemsforListing', model);
+        const result = await axios.post('http://20.198.233.3:5080/api/Item/GetItemsforListing', model);
         setTableData(result.data.data);
         return;
     }
 
     async function handleClickDelete(itemID) {
-        const result = await axios.get('https://localhost:7211/api/Item/DeleteItem', { params: { itemID: parseInt(itemID), userID: parseInt(userId) } });
+        const result = await axios.get('http://20.198.233.3:5080/api/Item/DeleteItem', { params: { itemID: parseInt(itemID), userID: parseInt(userId) } });
         if (result.data.statusCode === "Error") {
             toast.error(result.data.message);
             return;
@@ -183,7 +183,7 @@ export default function ItemPage() {
     }
 
     async function GetItemSubCategoryListForDropdown() {
-        const result = await axios.get('https://localhost:7211/api/Item/GetItemSubCategoryListForDropdown');
+        const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemSubCategoryListForDropdown');
         setItemSubCategoryList(result.data.data)
     }
 

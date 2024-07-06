@@ -99,13 +99,13 @@ export default function SubCategoryPage() {
             dealerID: values.dealerID,
             categoryID: values.categoryID
         }
-        const result = await axios.post('https://localhost:7211/api/Item/GetItemSubCategoriesforListing', model);
+        const result = await axios.post('http://20.198.233.3:5080/api/Item/GetItemSubCategoriesforListing', model);
         setTableData(result.data.data);
         return;
     }
 
     async function handleClickDelete(subCategoryID) {
-        const result = await axios.get('https://localhost:7211/api/Item/DeleteItemSubCategory', { params: { subCategoryID: parseInt(subCategoryID), userID: parseInt(userId) } });
+        const result = await axios.get('http://20.198.233.3:5080/api/Item/DeleteItemSubCategory', { params: { subCategoryID: parseInt(subCategoryID), userID: parseInt(userId) } });
         if (result.data.statusCode === "Error") {
             toast.error(result.data.message);
             return;
@@ -122,12 +122,12 @@ export default function SubCategoryPage() {
     }
 
     async function GetItemCategoryListForDropdown() {
-        const result = await axios.get('https://localhost:7211/api/Item/GetItemCategoryListForDropdown');
+        const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemCategoryListForDropdown');
         setItemCategoryList(result.data.data)
     }
 
     async function GetDealerListForDropdown() {
-        const result = await axios.get('https://localhost:7211/api/Dealer/GetDealerListForDropdown');
+        const result = await axios.get('http://20.198.233.3:5080/api/Dealer/GetDealerListForDropdown');
         setDealerList(result.data.data)
     }
 
