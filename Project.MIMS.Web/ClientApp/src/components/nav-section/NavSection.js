@@ -43,6 +43,7 @@ function NavItem({ item }) {
           bgcolor: 'action.selected',
           fontWeight: 'fontWeightBold',
         },
+        width: 320
       }}
     >
       <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon>
