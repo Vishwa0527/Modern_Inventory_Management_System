@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Project.MIMS.Core.Common;
-using Project.MIMS.Core.Services;
+using Project.MIMS.Core.Models.ItemManagement;
 using Project.MIMS.Core.Services.ItemManagement;
-using Project.MIMS.Services.ItemManagement;
 
 namespace Project.MIMS.API.Controllers
 {
@@ -17,11 +15,39 @@ namespace Project.MIMS.API.Controllers
             this.dealerService = dealerService;
         }
 
-        [HttpGet]
-        [Route("GetDealerListForDropdown")]
-        public async Task<MIMSResponse> GetDealerListForDropdown()
+        [HttpPost]
+        [Route("DealerSave")]
+        public async Task<MIMSResponse> DealerSave(DealerSaveModel model)
         {
-            return await dealerService.GetDealerListForDropdown();
+            return await dealerService.DealerSave(model);
+        }
+
+        [HttpGet]
+        [Route("GetAllDealersForDropdown")]
+        public async Task<MIMSResponse> GetDealersForDropdown()
+        {
+            return await dealerService.GetDealersForDropDown();
+        }
+
+        [HttpPost]
+        [Route("GetDealerDetails")]
+        public async Task<MIMSResponse> GetDealerDetails(DealerSaveModel model)
+        {
+            return await dealerService.GetDealerDetails(model);
+        }
+
+        [HttpGet]
+        [Route("GetDealerDetailsByDealerID")]
+        public async Task<MIMSResponse> GetDealerDetailsByDealerID(int dealerID)
+        {
+            return await dealerService.GetDealerDetailsByDealerID(dealerID);
+        }
+
+        [HttpPost]
+        [Route("DealerUpdate")]
+        public async Task<MIMSResponse> DealerUpdate(DealerSaveModel model)
+        {
+            return await dealerService.DealerUpdate(model);
         }
     }
 }
