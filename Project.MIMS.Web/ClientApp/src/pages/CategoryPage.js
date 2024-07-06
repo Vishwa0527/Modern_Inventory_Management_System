@@ -29,6 +29,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import * as Yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_URL } from './configuration';
 // import { AESEncryptionParam } from '../helpers/AesEncrypt';
 // ----------------------------------------------------------------------
 // function TablePaginationActions(props) {
@@ -154,13 +155,13 @@ export default function CategoryPage() {
       categoryName: values.categoryName,
       categoryCode: values.categoryCode
     }
-    const result = await axios.post('http://20.198.233.3:5080/api/Item/GetItemCategoriesforListing', model);
+    const result = await axios.post(API_URL + '/api/Item/GetItemCategoriesforListing', model);
     setTableData(result.data.data);
     return;
   }
 
   async function handleClickDelete(itemCategoryID) {
-    const result = await axios.get('http://20.198.233.3:5080/api/Item/DeleteItemCategory', { params: { itemCategoryID: parseInt(itemCategoryID) } });
+    const result = await axios.get(API_URL + '/api/Item/DeleteItemCategory', { params: { itemCategoryID: parseInt(itemCategoryID) } });
     if (result.data.statusCode === "Error") {
       toast.error(result.data.message);
       return;

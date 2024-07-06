@@ -18,6 +18,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import MenuItem from '@material-ui/core/MenuItem';
+import { API_URL } from './configuration';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
@@ -148,7 +149,7 @@ export default function SubCategoryAddPage() {
                 createdBy: userId == null ? 0 : parseInt(userId)
             }
 
-            const result = await axios.post('http://20.198.233.3:5080/api/Item/ItemSubCategorySave', model);
+            const result = await axios.post(API_URL + '/api/Item/ItemSubCategorySave', model);
             if (result.data.statusCode === "Error") {
                 toast.error(result.data.message);
                 return;
@@ -171,7 +172,7 @@ export default function SubCategoryAddPage() {
                 createdBy: userId == null ? 0 : parseInt(userId)
             }
 
-            const result = await axios.post('http://20.198.233.3:5080/api/Item/ItemSubCategorySave', model);
+            const result = await axios.post(API_URL + '/api/Item/ItemSubCategorySave', model);
             if (result.data.statusCode === "Error") {
                 toast.error(result.data.message);
                 return;
@@ -188,7 +189,7 @@ export default function SubCategoryAddPage() {
     const { setValues, handleSubmit, getFieldProps, values } = formik;
 
     async function GetItemCategoryDetailsByID(subCategoryID) {
-        const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemSubCategoryDetailsByID', { params: { subCategoryID: parseInt(subCategoryID) } });
+        const result = await axios.get(API_URL + '/api/Item/GetItemSubCategoryDetailsByID', { params: { subCategoryID: parseInt(subCategoryID) } });
         setValues({
             ...values,
             subCategoryCode: result.data.data.subCategoryCode,
@@ -201,12 +202,12 @@ export default function SubCategoryAddPage() {
     }
 
     async function GetItemCategoryListForDropdown() {
-        const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemCategoryListForDropdown');
+        const result = await axios.get(API_URL + '/api/Item/GetItemCategoryListForDropdown');
         setItemCategoryList(result.data.data)
     }
 
     async function GetDealerListForDropdown() {
-        const result = await axios.get('http://20.198.233.3:5080/api/Dealer/GetDealerListForDropdown');
+        const result = await axios.get(API_URL + '/api/Dealer/GetDealerListForDropdown');
         setDealerList(result.data.data)
     }
 

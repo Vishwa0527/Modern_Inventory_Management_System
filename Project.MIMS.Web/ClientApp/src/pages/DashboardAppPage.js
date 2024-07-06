@@ -19,6 +19,7 @@ import {
 } from '../sections/@dashboard/app';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_URL } from './configuration';
 
 
 
@@ -45,19 +46,19 @@ export default function DashboardAppPage() {
   }, []);
 
   async function GetAllDonationTypeLength() {
-    const result = await axios.get('http://20.198.233.3:5080/api/DonationType/GetAllDonationTypeLength');
+    const result = await axios.get(API_URL + '/api/DonationType/GetAllDonationTypeLength');
     setDonationTypeLegnth(result.data.data.length)
     return;
   }
 
   async function GetAllDonorLength() {
-    const result = await axios.get('http://20.198.233.3:5080/api/Donor/GetAllDonorLength');
+    const result = await axios.get(API_URL + '/api/Donor/GetAllDonorLength');
     setDonorLegnth(result.data.data.length)
     return;
   }
 
   async function GetAllSeekerLength() {
-    const result = await axios.get('http://20.198.233.3:5080/api/Seeker/GetAllSeekerLength');
+    const result = await axios.get(API_URL + '/api/Seeker/GetAllSeekerLength');
     setSeekerLegnth(result.data.data.length)
     return;
   }

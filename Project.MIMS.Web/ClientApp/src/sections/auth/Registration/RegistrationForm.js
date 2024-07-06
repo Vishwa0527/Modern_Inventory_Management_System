@@ -13,6 +13,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ImageUploader from 'react-images-upload';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
+import { API_URL } from '../../../pages/configuration';
 
 // ----------------------------------------------------------------------
 
@@ -71,7 +72,7 @@ export default function RegistrationForm() {
             contactNumber: values.contactNumber,
             image: image
         }
-        const result = await axios.post('http://20.198.233.3:5080/api/User/Registration', model);
+        const result = await axios.post(API_URL + '/api/User/Registration', model);
         if (result.data.statusCode === "Error") {
             toast.error("Error Occured in Registration");
             return;
@@ -84,7 +85,7 @@ export default function RegistrationForm() {
     }
 
     async function getDonationTypesForTheDropDown() {
-        const result = await axios.get('http://20.198.233.3:5080/api/DonationType/GetDonationTypesForTheDropDown');
+        const result = await axios.get(API_URL + '/api/DonationType/GetDonationTypesForTheDropDown');
         setDonationTypes(result.data.data);
     }
 

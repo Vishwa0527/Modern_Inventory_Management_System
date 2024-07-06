@@ -25,6 +25,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_URL } from './configuration';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
@@ -153,7 +154,7 @@ export default function ItemAddPage() {
                 createdBy: userId == null ? 0 : parseInt(userId)
             }
 
-            const result = await axios.post('http://20.198.233.3:5080/api/Item/ItemUpdate', model);
+            const result = await axios.post(API_URL + '/api/Item/ItemUpdate', model);
             if (result.data.statusCode === "Error") {
                 toast.error(result.data.message);
                 return;
@@ -184,7 +185,7 @@ export default function ItemAddPage() {
     const { setValues, handleSubmit, getFieldProps, values } = formik;
 
     async function GetItemDetailsByID(itemID) {
-        const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemDetailsByID', { params: { itemID: parseInt(itemID) } });
+        const result = await axios.get(API_URL + '/api/Item/GetItemDetailsByID', { params: { itemID: parseInt(itemID) } });
         setValues({
             ...values,
             subCategoryID: result.data.data.subCategoryID,
@@ -197,7 +198,7 @@ export default function ItemAddPage() {
     }
 
     async function GetItemSubCategoryListForDropdown() {
-        const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemSubCategoryListForDropdown');
+        const result = await axios.get(API_URL + '/api/Item/GetItemSubCategoryListForDropdown');
         setItemSubCategoryList(result.data.data)
     }
 
@@ -212,7 +213,7 @@ export default function ItemAddPage() {
     }
 
     async function SaveItemDetails() {
-        const result = await axios.post('http://20.198.233.3:5080/api/Item/ItemSave', itemArrayList);
+        const result = await axios.post(API_URL + '/api/Item/ItemSave', itemArrayList);
         if (result.data.statusCode === "Error") {
             toast.error(result.data.message);
             return;

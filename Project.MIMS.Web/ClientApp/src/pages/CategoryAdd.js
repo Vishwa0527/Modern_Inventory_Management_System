@@ -17,6 +17,7 @@ import CardContent from '@material-ui/core/CardContent';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import { API_URL } from './configuration';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {
@@ -132,7 +133,7 @@ export default function CategoryAddPage() {
                 isActive: values.isActive
             }
 
-            const result = await axios.post('http://20.198.233.3:5080/api/Item/ItemCategoryUpdate', model);
+            const result = await axios.post(API_URL + '/api/Item/ItemCategoryUpdate', model);
             if (result.data.statusCode === "Error") {
                 toast.error(result.data.message);
                 return;
@@ -149,7 +150,7 @@ export default function CategoryAddPage() {
                 categoryCode: values.categoryCode,
                 createdBy: userId == null ? 0 : parseInt(userId)
             }
-            const result = await axios.post('http://20.198.233.3:5080/api/Item/ItemCategorySave', model);
+            const result = await axios.post(API_URL + '/api/Item/ItemCategorySave', model);
             if (result.data.statusCode === "Error") {
                 toast.error(result.data.message);
                 return;
@@ -166,7 +167,7 @@ export default function CategoryAddPage() {
     const { setValues, handleSubmit, getFieldProps, values } = formik;
 
     async function GetItemCategoryDetailsByID(itemCategoryID) {
-        const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemCategoryDetailsByID', { params: { itemCategoryID: parseInt(itemCategoryID) } });
+        const result = await axios.get(API_URL + '/api/Item/GetItemCategoryDetailsByID', { params: { itemCategoryID: parseInt(itemCategoryID) } });
         //const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemCategoryDetailsByID', { params: { itemCategoryID: parseInt(itemCategoryID) } });
         setValues({
             ...values,

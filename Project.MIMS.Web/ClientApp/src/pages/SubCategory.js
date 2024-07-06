@@ -29,6 +29,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import * as Yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_URL } from './configuration';
 
 export default function SubCategoryPage() {
     const navigate = useNavigate();
@@ -99,13 +100,13 @@ export default function SubCategoryPage() {
             dealerID: values.dealerID,
             categoryID: values.categoryID
         }
-        const result = await axios.post('http://20.198.233.3:5080/api/Item/GetItemSubCategoriesforListing', model);
+        const result = await axios.post(API_URL + '/api/Item/GetItemSubCategoriesforListing', model);
         setTableData(result.data.data);
         return;
     }
 
     async function handleClickDelete(subCategoryID) {
-        const result = await axios.get('http://20.198.233.3:5080/api/Item/DeleteItemSubCategory', { params: { subCategoryID: parseInt(subCategoryID), userID: parseInt(userId) } });
+        const result = await axios.get(API_URL + '/api/Item/DeleteItemSubCategory', { params: { subCategoryID: parseInt(subCategoryID), userID: parseInt(userId) } });
         if (result.data.statusCode === "Error") {
             toast.error(result.data.message);
             return;
@@ -122,12 +123,12 @@ export default function SubCategoryPage() {
     }
 
     async function GetItemCategoryListForDropdown() {
-        const result = await axios.get('http://20.198.233.3:5080/api/Item/GetItemCategoryListForDropdown');
+        const result = await axios.get(API_URL + '/api/Item/GetItemCategoryListForDropdown');
         setItemCategoryList(result.data.data)
     }
 
     async function GetDealerListForDropdown() {
-        const result = await axios.get('http://20.198.233.3:5080/api/Dealer/GetDealerListForDropdown');
+        const result = await axios.get(API_URL + '/api/Dealer/GetDealerListForDropdown');
         setDealerList(result.data.data)
     }
 

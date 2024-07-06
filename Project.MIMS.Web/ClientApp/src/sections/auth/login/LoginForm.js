@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../../pages/Loader';
+import { API_URL } from '../../../pages/configuration';
 
 // ----------------------------------------------------------------------
 
@@ -28,7 +29,7 @@ export default function LoginForm() {
   });
 
   async function login(values) {
-    const result = await axios.post('http://20.198.233.3:5080/api/User/Login', values);
+    const result = await axios.post(API_URL + '/api/User/Login', values);
     if (result.data.statusCode === "Error") {
       toast.error("Invalid User Name Or Password");
       setloginData({

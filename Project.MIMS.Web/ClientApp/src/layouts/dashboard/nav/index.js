@@ -15,6 +15,7 @@ import NavSection from '../../../components/nav-section';
 //
 import DashboardNav from './config';
 import axios from 'axios';
+import { API_URL } from '../../../pages/configuration';
 
 // ----------------------------------------------------------------------
 
@@ -67,7 +68,7 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
 
   async function GetUserDetailsByUserID() {
-    const result = await axios.get('http://20.198.233.3:5080/api/User/GetUserDetailsByUserID', {
+    const result = await axios.get(API_URL + '/api/User/GetUserDetailsByUserID', {
       params: {
         userId: userId
       }
@@ -82,7 +83,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
   async function GetUserImageData() {
     if (userId !== 0) {
-      const result = await axios.get('http://20.198.233.3:5080/api/User/GetUserImageByUserID', {
+      const result = await axios.get(API_URL + '/api/User/GetUserImageByUserID', {
         params: {
           userId: userId
         }

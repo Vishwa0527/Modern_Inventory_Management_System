@@ -8,6 +8,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { API_URL } from '../../../pages/configuration';
 
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
@@ -25,7 +26,7 @@ function DashboardNav() {
   }, [userId]);
 
   async function GetUserDetailsByUserID() {
-    const result = await axios.get('http://20.198.233.3:5080/api/User/GetUserDetailsByUserID', {
+    const result = await axios.get(API_URL + '/api/User/GetUserDetailsByUserID', {
       params: {
         userId: userId
       }
