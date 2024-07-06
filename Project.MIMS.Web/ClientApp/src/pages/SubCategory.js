@@ -29,6 +29,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import * as Yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_URL } from './configuration';
 
 export default function SubCategoryPage() {
     const navigate = useNavigate();

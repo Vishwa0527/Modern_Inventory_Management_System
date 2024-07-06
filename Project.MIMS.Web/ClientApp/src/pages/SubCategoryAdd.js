@@ -18,6 +18,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import MenuItem from '@material-ui/core/MenuItem';
+import { API_URL } from './configuration';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {

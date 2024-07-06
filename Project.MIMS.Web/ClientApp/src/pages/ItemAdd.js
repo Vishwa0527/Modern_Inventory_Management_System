@@ -25,6 +25,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { API_URL } from './configuration';
 
 // ----------------------------------------------------------------------
 function TablePaginationActions(props) {

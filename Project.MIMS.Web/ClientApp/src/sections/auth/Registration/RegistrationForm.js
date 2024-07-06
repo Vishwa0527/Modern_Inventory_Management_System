@@ -13,6 +13,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ImageUploader from 'react-images-upload';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
+import { API_URL } from '../../../pages/configuration';
 
 // ----------------------------------------------------------------------
 

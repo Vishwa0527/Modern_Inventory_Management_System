@@ -15,6 +15,7 @@ import NavSection from '../../../components/nav-section';
 //
 import DashboardNav from './config';
 import axios from 'axios';
+import { API_URL } from '../../../pages/configuration';
 
 // ----------------------------------------------------------------------
 

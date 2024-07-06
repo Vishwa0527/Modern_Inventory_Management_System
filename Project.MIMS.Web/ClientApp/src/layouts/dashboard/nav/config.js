@@ -8,6 +8,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { API_URL } from '../../../pages/configuration';
 
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;

@@ -11,6 +11,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../../pages/Loader';
+import { API_URL } from '../../../pages/configuration';
 
 // ----------------------------------------------------------------------
 
