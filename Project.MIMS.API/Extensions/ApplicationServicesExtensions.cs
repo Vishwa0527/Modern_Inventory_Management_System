@@ -1,7 +1,9 @@
 ﻿using Project.MIMS.Core.Common;
 using Project.MIMS.Core.Services;
+using Project.MIMS.Core.Services.Administration;
 using Project.MIMS.Core.Services.ItemManagement;
 using Project.MIMS.Services;
+using Project.MIMS.Services.Administration;
 using Project.MIMS.Services.ItemManagement;
 
 namespace Project.MIMS.API.Extensions
@@ -20,6 +22,8 @@ namespace Project.MIMS.API.Extensions
             services.AddTransient<IDonationRequestService, DonationRequestService>();
             services.AddTransient<IItemService, ItemService>();
             services.AddTransient<IDealerService, DealerService>();
+            services.AddTransient<ICompanyService, CompanyService>();
+            services.AddTransient<ISalesPointService, SalesPointService>();
 
             return services;
         }

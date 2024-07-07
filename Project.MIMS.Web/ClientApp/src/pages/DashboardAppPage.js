@@ -62,6 +62,45 @@ export default function DashboardAppPage() {
     setSeekerLegnth(result.data.data.length)
     return;
   }
+
+  const newsUpdates = [
+    {
+      id: '1',
+      title: 'Breaking News: Market Hits Record High',
+      description: 'The stock market reached an all-time high today with investors showing confidence...',
+      image: '/assets/images/covers/cover_1.jpg',
+      postedAt: new Date('2024-07-01'),
+    },
+    {
+      id: '2',
+      title: 'Technology Advances in 2024',
+      description: 'Innovations in AI and quantum computing are set to revolutionize industries...',
+      image: '/assets/images/covers/cover_2.jpg',
+      postedAt: new Date('2024-07-02'),
+    },
+    {
+      id: '3',
+      title: 'New Environmental Policies',
+      description: 'Governments worldwide are implementing new policies to combat climate change...',
+      image: '/assets/images/covers/cover_3.jpg',
+      postedAt: new Date('2024-07-03'),
+    },
+    {
+      id: '4',
+      title: 'Healthcare Breakthroughs',
+      description: 'Recent breakthroughs in healthcare are promising better treatments for chronic diseases...',
+      image: '/assets/images/covers/cover_4.jpg',
+      postedAt: new Date('2024-07-04'),
+    },
+    {
+      id: '5',
+      title: 'Sports Update: Championship Highlights',
+      description: 'Highlights from the latest championship games and upcoming sports events...',
+      image: '/assets/images/covers/cover_5.jpg',
+      postedAt: new Date('2024-07-05'),
+    },
+  ];
+
   return (
     <>
       <Helmet>
@@ -175,19 +214,19 @@ export default function DashboardAppPage() {
               chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
             />
           </Grid> */}
-          {/* 
+
           <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="News Update"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: faker.name.jobTitle(),
-                description: faker.name.jobTitle(),
+              list={newsUpdates.map((x, index) => ({
+                id: x.id,
+                title: x.name,
+                description: x.description,
                 image: `/assets/images/covers/cover_${index + 1}.jpg`,
-                postedAt: faker.date.recent(),
+                postedAt: x.postedAt,
               }))}
             />
-          </Grid> */}
+          </Grid>
 
           {/* <Grid item xs={12} md={6} lg={4}>
             <AppOrderTimeline

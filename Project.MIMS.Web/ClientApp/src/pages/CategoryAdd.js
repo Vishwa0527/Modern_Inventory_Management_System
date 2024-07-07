@@ -17,6 +17,7 @@ import CardContent from '@material-ui/core/CardContent';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import MenuItem from '@material-ui/core/MenuItem';
 import { API_URL } from './configuration';
 
 // ----------------------------------------------------------------------
@@ -86,15 +87,40 @@ export default function CategoryAddPage() {
     const { itemCategoryID } = useParams();
     const [userId, setUserId] = useState(null);
     const [isUpdate, setIsUpdate] = useState(false);
+    const [admin, setIsAdmin] = useState(false);
+    const [companyList, setComanyList] = useState([]);
+    const [salesPointList, setSalesPointList] = useState([]);
+    const [userCompanyID, setUserCompanyID] = useState(0);
+    const [userSalesPointID, setUserSalesPointID] = useState(0);
+
     const [formData, setFormData] = useState({
         categoryCode: '',
         categoryName: '',
-        isActive: false
+        isActive: false,
+        companyID: 0,
+        salesPointID: 0
 
     });
+
     useEffect(() => {
         const userIdFromStorage = localStorage.getItem('userId');
+        const userTypeFromStorage = localStorage.getItem('userType');
+        const companyIDFromStorage = localStorage.getItem('companyID');
+        const salesPointIDFromStorage = localStorage.getItem('salesPointID');
+
+        setUserCompanyID(parseInt(companyIDFromStorage));
+        setUserSalesPointID(parseInt(salesPointIDFromStorage))
+
+        setFormData({
+            ...formData,
+            companyID: parseInt(companyIDFromStorage),
+            salesPointID: parseInt(salesPointIDFromStorage)
+        })
+        if (userTypeFromStorage == 2) {
+            setIsAdmin(true)
+        }
         setUserId(userIdFromStorage);
+        GetComanyListForDropdown();
         if (itemCategoryID > 0) {
             setIsUpdate(true)
             GetItemCategoryDetailsByID(itemCategoryID);
@@ -107,13 +133,17 @@ export default function CategoryAddPage() {
         initialValues: {
             categoryName: formData.categoryName,
             categoryCode: formData.categoryCode,
-            isActive: formData.isActive
+            isActive: formData.isActive,
+            companyID: formData.companyID,
+            salesPointID: formData.salesPointID
         },
 
         validationSchema: () => {
             return Yup.object().shape({
                 categoryName: Yup.string().required("Please fill the category name"),
                 categoryCode: Yup.string().required("Please fill the category code"),
+                companyID: Yup.number().min(1, 'Please Select Company').required('Company Required'),
+                salesPointID: Yup.number().min(1, 'Please Select SalesPoint').required('SalesPoint Required'),
             });
         },
 
@@ -122,6 +152,22 @@ export default function CategoryAddPage() {
         }
     }
     );
+
+    useEffect(() => {
+        if (formik.values.companyID !== 0) {
+            GetSalesPointListForDropdown();
+        }
+    }, [formik.values.companyID]);
+
+    useEffect(() => {
+        if (userSalesPointID !== 0) {
+            setValues({
+                ...values,
+                companyID: parseInt(userCompanyID),
+                salesPointID: parseInt(userSalesPointID)
+            })
+        }
+    }, [userSalesPointID]);
 
     async function SubmitForm(values) {
         if (isUpdate) {
@@ -148,7 +194,8 @@ export default function CategoryAddPage() {
             let model = {
                 categoryName: values.categoryName,
                 categoryCode: values.categoryCode,
-                createdBy: userId == null ? 0 : parseInt(userId)
+                createdBy: userId == null ? 0 : parseInt(userId),
+                salesPointID: parseInt(values.salesPointID)
             }
             const result = await axios.post(API_URL + '/api/Item/ItemCategorySave', model);
             if (result.data.statusCode === "Error") {
@@ -176,6 +223,36 @@ export default function CategoryAddPage() {
             isActive: result.data.data.isActive
 
         })
+    }
+
+    async function GetComanyListForDropdown() {
+        const result = await axios.get(API_URL + '/api/Company/GetCompaniesForDropDown');
+        setComanyList(result.data.data)
+    }
+
+    async function GetSalesPointListForDropdown() {
+        const result = await axios.get(API_URL + '/api/SalesPoint/GetSalesPointsForDropDown', { params: { companyID: parseInt(formik.values.companyID) } });
+        setSalesPointList(result.data.data)
+    }
+
+    function generateDropDownMenuCompany(data) {
+        let items = []
+        if (data != null) {
+            data.forEach(x => {
+                items.push(x.isActive == true ? <MenuItem key={x.companyID} value={x.companyID}>{x.companyName}</MenuItem> : null)
+            });
+        }
+        return items
+    }
+
+    function generateDropDownMenuSalesPoint(data) {
+        let items = []
+        if (data != null) {
+            data.forEach(x => {
+                items.push(x.isActive == true ? <MenuItem key={x.salesPointID} value={x.salesPointID}>{x.salesPointName}</MenuItem> : null)
+            });
+        }
+        return items
     }
 
     function handleClick() {
@@ -209,6 +286,40 @@ export default function CategoryAddPage() {
                                     onClick={handleClick}><ArrowBackIcon /></Button>
                             </Stack>
                             <br />
+                            <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    label="Company *"
+                                    value={formik.values.companyID}
+                                    onChange={formik.handleChange}
+                                    disabled={!admin}
+                                    {...formik.getFieldProps('companyID')}
+                                    error={Boolean(formik.touched.companyID && formik.errors.companyID)}
+                                    helperText={formik.touched.companyID && formik.errors.companyID}
+                                    sx={{ flex: 1 }}
+                                >
+                                    <MenuItem key={0} value={0}> Select Company</MenuItem>
+                                    {generateDropDownMenuCompany(companyList)}
+                                </TextField>
+                                <TextField
+                                    select
+                                    fullWidth
+                                    size="small"
+                                    label="Sales Point *"
+                                    value={formik.values.salesPointID}
+                                    disabled={!admin}
+                                    onChange={formik.handleChange}
+                                    {...formik.getFieldProps('salesPointID')}
+                                    error={Boolean(formik.touched.salesPointID && formik.errors.salesPointID)}
+                                    helperText={formik.touched.salesPointID && formik.errors.salesPointID}
+                                    sx={{ flex: 1 }}
+                                >
+                                    <MenuItem key={0} value={0}> Select Sales Point</MenuItem>
+                                    {generateDropDownMenuSalesPoint(salesPointList)}
+                                </TextField>
+                            </Stack>
                             <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px' }} spacing={3}>
                                 <TextField
                                     fullWidth
