@@ -9,5 +9,7 @@ namespace Project.MIMS.Core.Models
         public int UserID { get; set; }
         public string UserName { get; set; }
         public int UserType { get; set; }
+        public int CompanyID { get; set; }
+        public int SalesPointID { get; set; }
     }
 }
