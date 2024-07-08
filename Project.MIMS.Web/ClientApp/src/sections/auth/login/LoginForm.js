@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Link, Stack, IconButton, InputAdornment, TextField, Grid } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
@@ -61,7 +61,7 @@ export default function LoginForm() {
   });
   const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
   return (
-    <>
+    <><Grid style={{ minHeight: '500px' }}>
       <FormikProvider value={formik}>
         <ToastContainer
           position="bottom-right"
@@ -114,6 +114,7 @@ export default function LoginForm() {
           </LoadingButton>
         </Form>
       </FormikProvider>
+    </Grid>
     </>
   );
 }

@@ -90,7 +90,10 @@ export default function LoginPage() {
                   sx={{
                     borderRadius: '12px',
                     padding: '20px',
-                    boxShadow: '0px 4px 24px rgba(0, 0, 0, 0.1)',
+                    boxShadow: '0px 4px 24px rgba(140, 140, 140, 0.6)',
+                    backgroundColor: 'rgba(250, 250, 255, 0.8)',
+                    width: '100%',
+                    height: '500px', // Set the desired height
                   }}
                 >
                   <StyledContent>
