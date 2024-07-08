@@ -34,6 +34,44 @@ export default function DashboardAppPage() {
   const [donorLegnth, setDonorLegnth] = useState(0);
   const [seekerLegnth, setSeekerLegnth] = useState(0);
 
+  const newsUpdates = [
+    {
+      id: '1',
+      title: 'Smart Phones',
+      description: 'Samsung Company Introduced the new S24 Ultra',
+      image: '/assets/images/covers/cover_1.jpg',
+      postedAt: new Date('2024-07-01'),
+    },
+    {
+      id: '2',
+      title: 'Sony TV',
+      description: 'Sony Bravia has new smart TV series.',
+      image: '/assets/images/covers/cover_2.jpg',
+      postedAt: new Date('2024-07-02'),
+    },
+    {
+      id: '3',
+      title: 'Best Branch',
+      description: 'Boralla Branch is the most sale branch in this month',
+      image: '/assets/images/covers/cover_3.jpg',
+      postedAt: new Date('2024-07-03'),
+    },
+    {
+      id: '4',
+      title: 'Fridge',
+      description: 'New Samsung Fridge series has R600a gas.',
+      image: '/assets/images/covers/cover_4.jpg',
+      postedAt: new Date('2024-07-04'),
+    },
+    {
+      id: '5',
+      title: 'JBL Sound Systems',
+      description: 'JBL Party box new stock coming soon.',
+      image: '/assets/images/covers/cover_5.jpg',
+      postedAt: new Date('2024-07-05'),
+    },
+  ];
+
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem('userId');
     setUserId(userIdFromStorage);
@@ -93,11 +131,8 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Sales Chart"
-              subheader="Best Sales in February"
+              subheader="Best Sales in June"
               chartLabels={[
-                '07/01/2023',
-                '08/01/2023',
-                '09/01/2023',
                 '10/01/2023',
                 '11/01/2023',
                 '12/01/2023',
@@ -106,19 +141,22 @@ export default function DashboardAppPage() {
                 '03/01/2024',
                 '04/01/2024',
                 '05/01/2024',
+                '06/01/2024',
+                '07/01/2024',
+                '08/01/2024',
               ]}
               chartData={[
+                // {
+                //   name: 'Sales',
+                //   type: 'column',
+                //   fill: 'solid',
+                //   data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                // },
                 {
-                  name: 'Sales',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-                },
-                {
-                  name: 'Demand',
+                  name: 'sales',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: [44, 55, 41, 57, 22, 43, 21, 41, 76, 27, 43],
                 }
               ]}
             />
@@ -134,6 +172,7 @@ export default function DashboardAppPage() {
                 { label: 'Iorn', value: 15 },
                 { label: 'Rice Cooker', value: 10 },
                 { label: 'Laptop', value: 18 },
+                { label: 'Smart Phones', value: 38 },
               ]}
               chartColors={[
                 theme.palette.primary.main,
@@ -144,68 +183,68 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
-          {/* <Grid item xs={12} md={6} lg={8}>
+          <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
-              title="Conversion Rates"
-              subheader="(+43%) than last year"
+              title="Fast Moving Items (Overview)"
+              subheader="(+30%) than last year"
               chartData={[
-                { label: 'Italy', value: 400 },
-                { label: 'Japan', value: 430 },
-                { label: 'China', value: 448 },
-                { label: 'Canada', value: 470 },
-                { label: 'France', value: 540 },
-                { label: 'Germany', value: 580 },
-                { label: 'South Korea', value: 690 },
-                { label: 'Netherlands', value: 1100 },
-                { label: 'United States', value: 1200 },
-                { label: 'United Kingdom', value: 1380 },
+                { label: 'Fridge', value: 400 },
+                { label: 'TV', value: 430 },
+                { label: 'Rice Cooker', value: 448 },
+                { label: 'Iron', value: 470 },
+                { label: 'Laptop', value: 640 },
+                { label: 'Sound Systems', value: 780 },
+                { label: 'Smart Phones', value: 900 },
+
               ]}
             />
-          </Grid> */}
-          {/* 
+          </Grid>
+
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
-              title="Current donation Types"
-              chartLabels={['Blood', 'Money', 'Kidney', 'Hair']}
+              title="Best Branchers"
+              chartLabels={['Homagama', 'Boralla', 'Kottawa', 'Maradana', 'Colombo Fort',]}
               chartData={[
                 { name: 'March', data: [80, 50, 30, 40] },
                 { name: 'April', data: [20, 30, 40, 80] },
                 { name: 'May', data: [44, 76, 78, 13] },
+                { name: 'June', data: [70, 60, 75, 23] },
+                { name: 'July', data: [55, 86, 78, 18] },
               ]}
               chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
             />
-          </Grid> */}
-          {/* 
+          </Grid>
+
           <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="News Update"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: faker.name.jobTitle(),
-                description: faker.name.jobTitle(),
+              list={newsUpdates.map((x, index) => ({
+                id: x.id,
+                title: x.name,
+                description: x.description,
                 image: `/assets/images/covers/cover_${index + 1}.jpg`,
-                postedAt: faker.date.recent(),
+                postedAt: x.postedAt,
               }))}
             />
-          </Grid> */}
+          </Grid>
 
-          {/* <Grid item xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={6} lg={4}>
             <AppOrderTimeline
-              title="Donation Timeline"
+              title="Stock Received"
               list={[...Array(5)].map((_, index) => ({
                 id: faker.datatype.uuid(),
                 title: [
-                  'Kidney Donation Request',
-                  'Blood Donation Request',
-                  'Hair Donation Request',
-                  'Blood Availability',
-                  'Donation Campaingn'
+                  'Sony 32inch LED TV',
+                  'Samsung A05,A06,A07 Smart phones',
+                  'LG HIFI System 3',
+                  'Samsung R600a Fridge',
+                  'Haire Air conditioner'
                 ][index],
                 type: `order${index + 1}`,
                 time: faker.date.past(),
               }))}
             />
-          </Grid> */}
+          </Grid>
 
           {/* <Grid item xs={12} md={6} lg={4}>
             <AppTrafficBySite
