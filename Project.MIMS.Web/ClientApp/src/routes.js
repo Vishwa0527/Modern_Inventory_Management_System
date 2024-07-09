@@ -18,6 +18,7 @@ import ItemPage from './pages/Item';
 import DealerAddPage from './pages/DealerAdd';
 import ItemAddPage from './pages/ItemAdd';
 import SalesPage from './pages/Sales';
+import DamageStockPage from './pages/DamageStock';
 // import ProfilePage from './pages/ProfilePage';
 import DonationRequestAdd from './pages/DonationRequestAdd';
 import Loader from './pages/Loader';
@@ -41,6 +42,7 @@ export default function Router() {
         { path: 'DealerAdd/:dealerID', element: <DealerAddPage /> }, ,
         { path: 'ItemAdd/:itemID', element: <ItemAddPage /> },
         { path: 'Sales', element: <SalesPage /> },
+        { path: 'DamageStock', element: <DamageStockPage /> },
         // { path: 'profilePage', element: <ProfilePage /> },
         { path: 'donationRequestAdd', element: <DonationRequestAdd /> },
       ],

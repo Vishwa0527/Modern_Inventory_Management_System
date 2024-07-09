@@ -8,6 +8,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import { API_URL } from '../../../pages/configuration';
 
 
@@ -34,6 +35,7 @@ function DashboardNav() {
 
     setUserType(result.data.data.userType);
   }
+
 
   const admin = [
     {
@@ -95,9 +97,15 @@ function DashboardNav() {
       icon: <AttachMoneyIcon />,
     },
     {
+      title: 'Damage Stock',
+      path: '/dashboard/DamageStock',
+      icon: <DeleteTwoToneIcon />,
+    },
+    {
       title: 'Report',
       path: '/dashboard/Page404',
       icon: <AutoStoriesIcon />,
+
     },
     // {
     //   title: 'Category Add',
