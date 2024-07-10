@@ -11,5 +11,7 @@ namespace Project.MIMS.Core.Models.ItemManagement
         public string CategoryCode { get; set; }
         public int CreatedBy { get; set; }
         public bool IsActive { get; set; }
+        public int CompanyID { get; set; }
+        public int SalesPointID { get; set; }
     }
 }

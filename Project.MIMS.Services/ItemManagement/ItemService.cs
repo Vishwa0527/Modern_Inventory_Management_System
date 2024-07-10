@@ -35,6 +35,8 @@ namespace Project.MIMS.Services.ItemManagement
                     { "ItemCategoryID", Tuple.Create(0.ToString(), DbType.Int32, ParameterDirection.InputOutput) },
                     { "CategoryCode", Tuple.Create(model.CategoryCode.ToString(), DbType.String, ParameterDirection.Input) },
                     { "CategoryName", Tuple.Create(model.CategoryName.ToString(), DbType.String, ParameterDirection.Input) },
+                    { "CompanyID", Tuple.Create(model.CompanyID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "SalesPointID", Tuple.Create(model.SalesPointID.ToString(), DbType.Int32, ParameterDirection.Input) },
                     { "CreatedBy", Tuple.Create(model.CreatedBy.ToString(), DbType.Int32, ParameterDirection.Input) }
                 };
 

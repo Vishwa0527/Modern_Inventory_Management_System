@@ -42,7 +42,15 @@ export default function LoginForm() {
       autoClose: 1000,
       onClose: () => {
         const userId = result.data.data[0].userID;
+        const userType = result.data.data[0].userType;
+        const companyID = result.data.data[0].companyID;
+        const salesPointID = result.data.data[0].salesPointID;
+
+
         localStorage.setItem('userId', userId);
+        localStorage.setItem('userType', userType);
+        localStorage.setItem('companyID', companyID);
+        localStorage.setItem('salesPointID', salesPointID);
         navigate('/loader');
       }
     });
