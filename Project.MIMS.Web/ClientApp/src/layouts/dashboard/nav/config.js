@@ -96,6 +96,11 @@ function DashboardNav() {
       icon: <AttachMoneyIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     {
+      title: 'GRN',
+      path: '/dashboard/GRNAdd',
+      icon: <AttachMoneyIcon />,
+    },
+    {
       title: 'Report',
       path: '/dashboard/Page404',
       icon: <AutoStoriesIcon sx={{ color: 'mediumspringgreen' }} />,
