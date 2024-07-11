@@ -21,6 +21,7 @@ import SalesPage from './pages/Sales';
 // import ProfilePage from './pages/ProfilePage';
 import DonationRequestAdd from './pages/DonationRequestAdd';
 import Loader from './pages/Loader';
+import GRNAddPage from './pages/GoodReceiveNote';
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +42,7 @@ export default function Router() {
         { path: 'DealerAdd/:dealerID', element: <DealerAddPage /> }, ,
         { path: 'ItemAdd/:itemID', element: <ItemAddPage /> },
         { path: 'Sales', element: <SalesPage /> },
+        { path: 'GRNAdd', element: <GRNAddPage /> },
         // { path: 'profilePage', element: <ProfilePage /> },
         { path: 'donationRequestAdd', element: <DonationRequestAdd /> },
       ],
