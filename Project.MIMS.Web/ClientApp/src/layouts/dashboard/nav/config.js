@@ -8,6 +8,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import { API_URL } from '../../../pages/configuration';
 
 
@@ -37,9 +38,9 @@ function DashboardNav() {
 
   const admin = [
     {
-      title: 'dashboard',
+      title: 'Dashboard',
       path: '/dashboard/app',
-      icon: icon('ic_analytics'),
+      icon: <GraphicEqIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     {
       title: 'Category',
@@ -67,31 +68,36 @@ function DashboardNav() {
     {
       title: 'Dashboard',
       path: '/dashboard/app',
-      icon: icon('ic_analytics'),
+      icon: <GraphicEqIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     {
       title: 'Category',
       path: '/dashboard/category',
-      icon: <CategoryIcon />,
+      icon: <CategoryIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     {
       title: 'Sub Category',
       path: '/dashboard/SubCategory',
-      icon: <AbcIcon />,
+      icon: <AbcIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     {
       title: 'Dealer',
       path: '/dashboard/Dealer',
-      icon: <BadgeIcon />,
+      icon: <BadgeIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     {
       title: 'Item',
       path: '/dashboard/Item',
-      icon: <AssessmentIcon />,
+      icon: <AssessmentIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     {
       title: 'Sale',
       path: '/dashboard/Sales',
+      icon: <AttachMoneyIcon sx={{ color: 'mediumspringgreen' }} />,
+    },
+    {
+      title: 'GRN',
+      path: '/dashboard/GRNAdd',
       icon: <AttachMoneyIcon />,
     },
     {
@@ -117,7 +123,7 @@ function DashboardNav() {
     {
       title: 'Sales Report',
       path: '/dashboard/Page404',
-      icon: <AutoStoriesIcon />,
+      icon: <AutoStoriesIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     // {
     //   title: 'Category Add',
@@ -128,9 +134,9 @@ function DashboardNav() {
 
   const seeker = [
     {
-      title: 'dashboard',
+      title: 'Dashboard',
       path: '/dashboard/app',
-      icon: icon('ic_analytics'),
+      icon: <GraphicEqIcon sx={{ color: 'mediumspringgreen' }} />,
     },
     {
       title: 'Category',
