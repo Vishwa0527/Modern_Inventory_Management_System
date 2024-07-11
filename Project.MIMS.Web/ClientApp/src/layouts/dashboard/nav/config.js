@@ -102,6 +102,26 @@ function DashboardNav() {
     },
     {
       title: 'Report',
+      //path: '/dashboard/Page404',
+      icon: <AutoStoriesIcon />,
+    },
+    {
+      title: 'Live Stock',
+      path: '/dashboard/liveStock',
+      icon: <AutoStoriesIcon />,
+    },
+    {
+      title: 'Stock History',
+      path: '/dashboard/Page404',
+      icon: <AutoStoriesIcon />,
+    },
+    {
+      title: 'Damage stock Report',
+      path: '/dashboard/Page404',
+      icon: <AutoStoriesIcon />,
+    },
+    {
+      title: 'Sales Report',
       path: '/dashboard/Page404',
       icon: <AutoStoriesIcon sx={{ color: 'mediumspringgreen' }} />,
     },

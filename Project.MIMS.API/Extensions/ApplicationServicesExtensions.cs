@@ -24,6 +24,7 @@ namespace Project.MIMS.API.Extensions
             services.AddTransient<IDealerService, DealerService>();
             services.AddTransient<ICompanyService, CompanyService>();
             services.AddTransient<ISalesPointService, SalesPointService>();
+            services.AddTransient<ILiveStockService, LiveStockService>();
 
             return services;
         }
